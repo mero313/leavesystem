@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj": {}
+    "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj": {
+    "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj",
+        "projectUniqueName": "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj",
         "projectName": "LeaveRequestSystem",
-        "projectPath": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj",
-        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\obj\\",
+        "projectPath": "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj",
+        "packagesPath": "C:\\Users\\MeRo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MeRo\\Desktop\\leavesystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\MeRo\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -98,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

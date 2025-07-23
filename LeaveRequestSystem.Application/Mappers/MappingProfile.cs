@@ -1,14 +1,23 @@
-using AutoMapper;
-using LeaveRequestSystem.DTOs;
-using LeaveRequestSystem.Models;
+using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Application.DTOs;
+using LeaveRequestSystem.Domain.Enums;
 
-
-public class MappingProfile : Profile
+namespace LeaveRequestSystem.Application.Mappers
 {
-    public MappingProfile()
+    public static class LeaveRequestMapper
     {
-        CreateMap<RegisterRequest, User>();
-        CreateMap<User, UserResponse>();
-        // CreateMap<LoginRequest, User>();
+        public static LeaveRequest ToEntity(CreateLeaveRequestDto dto)
+        {
+            return new LeaveRequest
+            {
+                UserId = dto.UserId,
+                FromDate = dto.FromDate,
+                ToDate = dto.ToDate,
+                Reason = dto.Reason,
+                LeaveType = (LeaveType)dto.LeaveType, // Cast if using enum
+                Status = LeaveStatus.Pending, // Default to pending, for example
+                CreatedAt = DateTime.UtcNow
+            };
+        }
     }
 }
