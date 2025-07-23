@@ -1,6 +1,9 @@
 using LeaveRequestSystem.Domain.Entities;
+using System;
 using LeaveRequestSystem.Application.DTO;
-using LeaveRequestSystem.Domain.Enums
+using LeaveRequestSystem.Domain.Enums;
+
+
 
 namespace LeaveRequestSystem.Application.Mappers
 {
@@ -14,8 +17,9 @@ namespace LeaveRequestSystem.Application.Mappers
                 FromDate = dto.FromDate,
                 ToDate = dto.ToDate,
                 Reason = dto.Reason,
-                LeaveType = (LeaveType)dto.LeaveType, // Cast if using enum
-                Status = LeaveStatus.Pending, // Default to pending, for example
+                LeaveType = dto.LeaveType,
+                // Assuming Status is set to Pending by default, you can adjust this as needed
+                Status = LeaveStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
         }

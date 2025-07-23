@@ -1,30 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-namespace LeaveRequestSystem.Models
+using LeaveRequestSystem.Domain.Enums;
+
+
+
+
+namespace LeaveRequestSystem.Entities
 {
-    public enum Role
-    {
-        HR,
-        MANAGER,
-        EMPLOYEE
-    }
-
-    public enum LeaveType
-    {
-        ANNUAL,    // إجازة سنوية
-        SICK,      // إجازة مرضية  
-        TEMPORARY  // إجازة مؤقتة
-    }
-
-    public enum LeaveStatus
-    {
-        PENDING,           // في الانتظار
-        MANAGER_APPROVED,  // موافقة المدير
-        HR_APPROVED,       // موافقة الموارد البشرية
-        REJECTED,          // مرفوضة
-        CANCELLED          // ملغاة
-    }
 
     public class User
     {
@@ -41,7 +24,7 @@ namespace LeaveRequestSystem.Models
         [StringLength(100)]
         public string Name { get; set; } = null!;
 
-        
+
         [EmailAddress]
         public string? Email { get; set; }
 
@@ -59,7 +42,7 @@ namespace LeaveRequestSystem.Models
         public bool IsActive { get; set; } = true;
 
         // العلاقات
-        public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
+        public ICollection<LeaveRequest > LeaveRequests { get; set; } = new List<LeaveRequest>();
         public ICollection<User> Subordinates { get; set; } = new List<User>(); // الموظفين تحت إدارته
     }
 }

@@ -3,16 +3,24 @@ using System;
 using LeaveRequestSystem.Models;
 using System.ComponentModel.DataAnnotations;
 
-public class CreateLeaveRequestDto
+
+namespace LeaveRequestSystem.Application.DTO
 {
-    [Required(ErrorMessage = "تاريخ البداية مطلوب")]
-    public DateTime FromDate { get; set; }
+    /// <summary>
+    /// Data Transfer Object for creating a leave request.
+    /// </summary>
 
-    [Required(ErrorMessage = "تاريخ النهاية مطلوب")]
-    public DateTime ToDate { get; set; }
+    public class CreateLeaveRequestDto
+    {
+        [Required(ErrorMessage = "تاريخ البداية مطلوب")]
+        public DateTime FromDate { get; set; }
 
-    public LeaveType LeaveType { get; set; }
+        [Required(ErrorMessage = "تاريخ النهاية مطلوب")]
+        public DateTime ToDate { get; set; }
 
-    [StringLength(500, ErrorMessage = "سبب الإجازة يجب أن يكون أقل من 500 حرف")]
-    public string Reason { get; set; } = string.Empty;
+        public LeaveType LeaveType { get; set; } = LeaveType.Annual; // Default value
+
+        [StringLength(500, ErrorMessage = "سبب الإجازة يجب أن يكون أقل من 500 حرف")]
+        public string Reason { get; set; } = string.Empty;
+    }
 }
