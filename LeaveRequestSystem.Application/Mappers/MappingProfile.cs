@@ -1,6 +1,6 @@
 using LeaveRequestSystem.Domain.Entities;
-using LeaveRequestSystem.Application.DTOs;
-using LeaveRequestSystem.Domain.Enums;
+using LeaveRequestSystem.Application.DTO;
+using LeaveRequestSystem.Domain.Enums
 
 namespace LeaveRequestSystem.Application.Mappers
 {
