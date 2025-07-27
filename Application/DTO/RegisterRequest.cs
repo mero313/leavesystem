@@ -1,6 +1,6 @@
 
-using LeaveRequestSystem.Models;
 using System.ComponentModel.DataAnnotations;
+using LeaveRequestSystem.Domain.Enums;
 
 
 namespace LeaveRequestSystem.DTOs

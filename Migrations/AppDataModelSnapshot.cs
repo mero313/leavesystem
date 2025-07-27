@@ -15,18 +15,12 @@ namespace LeaveRequestSystem.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
 
-            modelBuilder.Entity("LeaveRequest", b =>
+            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.LeaveRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ApprovedByHRId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ApprovedByManagerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -35,35 +29,18 @@ namespace LeaveRequestSystem.Migrations
                     b.Property<DateTime>("FromDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("HRApprovalDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HRComments")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LeaveType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ManagerApprovalDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ManagerComments")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("LeaveType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ToDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
@@ -71,55 +48,10 @@ namespace LeaveRequestSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApprovedByHRId");
-
-                    b.HasIndex("ApprovedByManagerId");
-
-                    b.HasIndex("FromDate");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("LeaveRequests");
                 });
 
-            modelBuilder.Entity("LeaveRequestHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActionByUserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("ActionDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FromStatus")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("LeaveRequestId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ToStatus")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionByUserId");
-
-                    b.HasIndex("LeaveRequestId");
-
-                    b.ToTable("LeaveRequestHistories");
-                });
-
-            modelBuilder.Entity("LeaveRequestSystem.Models.User", b =>
+            modelBuilder.Entity("LeaveRequestSystem.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,9 +83,8 @@ namespace LeaveRequestSystem.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -162,129 +93,18 @@ namespace LeaveRequestSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Department");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("ManagerId");
 
-                    b.HasIndex("Username")
-                        .IsUnique();
-
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 7, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            Department = "HR",
-                            Email = "admin@example.com",
-                            IsActive = true,
-                            Name = "Super Admin",
-                            PasswordHash = "hash",
-                            Role = "HR",
-                            Username = "admin"
-                        });
                 });
 
-            modelBuilder.Entity("LeaveSettings", b =>
+            modelBuilder.Entity("LeaveRequestSystem.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Department")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LeaveType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MaxDaysPerRequest")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MaxDaysPerYear")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinDaysPerRequest")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("RequiresHRApproval")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("RequiresManagerApproval")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Department", "LeaveType")
-                        .IsUnique();
-
-                    b.ToTable("LeaveSettings");
-                });
-
-            modelBuilder.Entity("LeaveRequest", b =>
-                {
-                    b.HasOne("LeaveRequestSystem.Models.User", "ApprovedByHR")
+                    b.HasOne("LeaveRequestSystem.Entities.User", "Manager")
                         .WithMany()
-                        .HasForeignKey("ApprovedByHRId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("LeaveRequestSystem.Models.User", "ApprovedByManager")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByManagerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("LeaveRequestSystem.Models.User", "User")
-                        .WithMany("LeaveRequests")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApprovedByHR");
-
-                    b.Navigation("ApprovedByManager");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("LeaveRequestHistory", b =>
-                {
-                    b.HasOne("LeaveRequestSystem.Models.User", "ActionByUser")
-                        .WithMany()
-                        .HasForeignKey("ActionByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("LeaveRequest", "LeaveRequest")
-                        .WithMany()
-                        .HasForeignKey("LeaveRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ActionByUser");
-
-                    b.Navigation("LeaveRequest");
-                });
-
-            modelBuilder.Entity("LeaveRequestSystem.Models.User", b =>
-                {
-                    b.HasOne("LeaveRequestSystem.Models.User", "Manager")
-                        .WithMany("Subordinates")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ManagerId");
 
                     b.Navigation("Manager");
-                });
-
-            modelBuilder.Entity("LeaveRequestSystem.Models.User", b =>
-                {
-                    b.Navigation("LeaveRequests");
-
-                    b.Navigation("Subordinates");
                 });
 #pragma warning restore 612, 618
         }

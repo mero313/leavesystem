@@ -1,7 +1,7 @@
 using LeaveRequestSystem.Domain.Entities;
-using System;
-using LeaveRequestSystem.Application.DTO;
+using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Domain.Enums;
+using System;
 
 
 
@@ -9,7 +9,7 @@ namespace LeaveRequestSystem.Application.Mappers
 {
     public static class LeaveRequestMapper
     {
-        public static LeaveRequest ToEntity(CreateLeaveRequestDto dto)
+        public static LeaveRequest CreateLeaveRequest(CreateLeaveRequestDto dto)
         {
             return new LeaveRequest
             {
@@ -21,6 +21,20 @@ namespace LeaveRequestSystem.Application.Mappers
                 // Assuming Status is set to Pending by default, you can adjust this as needed
                 Status = LeaveStatus.Pending,
                 CreatedAt = DateTime.UtcNow
+            };
+        }
+
+        public static LeaveRequestResponseDto ToResponseDto(LeaveRequest  entity)
+        {
+            return new LeaveRequestResponseDto
+            {
+                Id = entity.Id,   
+                FromDate = entity.FromDate,
+                ToDate = entity.ToDate,
+                LeaveType = entity.LeaveType, // Assuming LeaveType is an enum
+                Reason = entity.Reason,
+                Status = entity.Status,
+                CreatedAt = entity.CreatedAt
             };
         }
     }
