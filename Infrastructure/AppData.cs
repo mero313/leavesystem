@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using LeaveRequestSystem.Domain.Entities;
-using LeaveRequestSystem.Domain.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 using LeaveRequestSystem.Entities;
 
 namespace LeaveRequestSystem.Data

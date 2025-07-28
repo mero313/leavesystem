@@ -16,12 +16,12 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateLeaveRequestDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateLeaveRequestDto dto )
         {
             // فرضاً تجيب userId من التوكن أو ثابت مؤقتاً (نجربه)
             int userId = 1; // لازم تعدله بالواقع عال JWT
-            var response = await _service.CreateLeaveRequestAsync(dto, userId);
-            return Ok(response);
+            var response = await _service.CreateLeaveRequestAsync(dto , userId);
+            return Ok(response );
         }
 
         [HttpGet("{userId}")]

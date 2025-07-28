@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    [Migration("20250727130947_newone")]
-    partial class newone
+    [Migration("20250728133503_datatime")]
+    partial class datatime
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

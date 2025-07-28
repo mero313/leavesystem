@@ -16,7 +16,7 @@ namespace LeaveRequestSystem.Application.DTOs
     public class CreateLeaveRequestDto
 
     {
-        public int UserId { get; set; }
+        // public int UserId { get; set; }
         [Required(ErrorMessage = "تاريخ البداية مطلوب")]
         public DateTime FromDate { get; set; }
 

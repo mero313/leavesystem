@@ -14,6 +14,6 @@ namespace LeaveRequestSystem.Application.DTOs
         public LeaveType LeaveType { get; set; }
         public string Reason { get; set; } = string.Empty;
         public LeaveStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; } = string.Empty;
     }
 }

@@ -13,7 +13,6 @@ namespace LeaveRequestSystem.Application.Mappers
         {
             return new LeaveRequest
             {
-                UserId = dto.UserId,
                 FromDate = dto.FromDate,
                 ToDate = dto.ToDate,
                 Reason = dto.Reason,
@@ -34,7 +33,7 @@ namespace LeaveRequestSystem.Application.Mappers
                 LeaveType = entity.LeaveType, // Assuming LeaveType is an enum
                 Reason = entity.Reason,
                 Status = entity.Status,
-                CreatedAt = entity.CreatedAt
+                CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss") // Format as needed
             };
         }
     }
