@@ -6054,19 +6054,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\MeRo\\.nuget\\packages\\": {}
+    "C:\\Users\\ASUS\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj",
+      "projectUniqueName": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj",
       "projectName": "LeaveRequestSystem",
-      "projectPath": "C:\\Users\\MeRo\\Desktop\\leavesystem\\LeaveRequestSystem.csproj",
-      "packagesPath": "C:\\Users\\MeRo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\MeRo\\Desktop\\leavesystem\\obj\\",
+      "projectPath": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\LeaveRequestSystem.csproj",
+      "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ASUS\\OneDrive\\Desktop\\LeaveRequestSystem\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\MeRo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -6090,7 +6090,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -6150,7 +6150,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
