@@ -32,6 +32,6 @@ namespace LeaveRequestSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();    
-        public ICollection<LeaveRequest> ApprovedLeaveRequests { get; set; } = new List<LeaveRequest>(); // الإجازات التي تمت الموافقة عليها من قبل هذا المستخدم    
+        //public ICollection<LeaveRequest> ApprovedLeaveRequests { get; set; } = new List<LeaveRequest>(); // الإجازات التي تمت الموافقة عليها من قبل هذا المستخدم    
     }
 }

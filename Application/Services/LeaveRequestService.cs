@@ -8,9 +8,9 @@ namespace LeaveRequestSystem.Application.Services
     {
         private readonly ILeaveRequestRepository repo;
 
-        public LeaveRequestService(ILeaveRequestRepository _repo)
+        public LeaveRequestService(ILeaveRequestRepository repo)
         {
-            repo = _repo;
+            this.repo = repo;
         }
 
         public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(CreateLeaveRequestDto dto, int userId)
