@@ -1,14 +1,11 @@
 using LeaveRequestSystem.Data;
-using LeaveRequestSystem.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using AutoMapper;
-
-
-
+using Microsoft.IdentityModel.Tokens;              // 👈 هذا ضروري
+using System.Text;              
+using Microsoft.EntityFrameworkCore;
+using LeaveRequestSystem.Application.Services;
+using LeaveRequestSystem.Infrastructure.Repositories;
+using LeaveRequestSystem.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +41,7 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddScoped<LeaveRequestService>();
 
 
 
@@ -59,6 +57,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+builder.Services.AddScoped<LeaveRequestService>();
 
 
 var app = builder.Build();
@@ -69,6 +71,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+     app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseCors("AllowAllOrigins");

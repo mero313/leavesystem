@@ -42,7 +42,6 @@ namespace LeaveRequestSystem.Entities
         public bool IsActive { get; set; } = true;
 
         // العلاقات
-        public ICollection<LeaveRequest > LeaveRequests { get; set; } = new List<LeaveRequest>();
-        public ICollection<User> Subordinates { get; set; } = new List<User>(); // الموظفين تحت إدارته
+        //    
     }
 }

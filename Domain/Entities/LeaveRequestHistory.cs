@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using LeaveRequestSystem.Models;
+using LeaveRequestSystem.Domain.Enums;
+using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Entities;
 
 
 
