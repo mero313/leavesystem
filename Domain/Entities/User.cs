@@ -6,42 +6,32 @@ using LeaveRequestSystem.Domain.Enums;
 
 
 
-namespace LeaveRequestSystem.Entities
+namespace LeaveRequestSystem.Domain.Entities
 {
 
     public class User
     {
         public int Id { get; set; }
-
-        [Required]
-        [StringLength(50)]
         public string Username { get; set; } = null!;
-
-        [Required]
         public string PasswordHash { get; set; } = null!;
-
-        [Required]
-        [StringLength(100)]
         public string Name { get; set; } = null!;
-
-
-        [EmailAddress]
-        public string? Email { get; set; }
-
-        [Required]
-        [StringLength(100)]
+        public string? Email { get; set; } 
         public string Department { get; set; } = null!;
 
+
         public Role Role { get; set; }
+
+
 
         // إضافة خصائص مهمة للإجازات
         public int? ManagerId { get; set; }  // من هو المدير المباشر
         public User? Manager { get; set; }   // Navigation property للمدير
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
         public bool IsActive { get; set; } = true;
 
-        // العلاقات
-        //    
+        public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();    
+        public ICollection<LeaveRequest> ApprovedLeaveRequests { get; set; } = new List<LeaveRequest>(); // الإجازات التي تمت الموافقة عليها من قبل هذا المستخدم    
     }
 }
