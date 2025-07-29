@@ -24,7 +24,7 @@ namespace LeaveRequestSystem.Domain.Entities
 
         public LeaveStatus Status { get; set; } = LeaveStatus.Pending;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
         
         // public DateTime? UpdatedAt { get; set; }
 

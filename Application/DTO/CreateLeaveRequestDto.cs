@@ -9,10 +9,7 @@ using LeaveRequestSystem.Domain.Enums;
 
 namespace LeaveRequestSystem.Application.DTOs
 {
-    /// <summary>
-    /// Data Transfer Object for creating a leave request.
-    /// </summary>
-
+  
     public class CreateLeaveRequestDto
 
     {
