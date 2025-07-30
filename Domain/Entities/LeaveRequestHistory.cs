@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using LeaveRequestSystem.Domain.Enums;
 using LeaveRequestSystem.Domain.Entities;
-using LeaveRequestSystem.Entities;
+
+
+
+namespace LeaveRequestSystem.Domain.Entities;
 
 
 

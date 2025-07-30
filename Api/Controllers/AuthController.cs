@@ -1,17 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using LeaveRequestSystem.Data;
-using LeaveRequestSystem.DTOs;
-using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
+using LeaveRequestSystem.Infrastructure.Data;
 using LeaveRequestSystem.Domain.Entities;
-using LeaveRequestSystem.Application.DTOs;  
-using LeaveRequestSystem.Application.Mappers;
-using LeaveRequestSystem.Entities;
+using LeaveRequestSystem.Application.DTOs;
+using LeaveRequestSystem.Domain.Repositories;
+using LeaveRequestSystem.Application.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 
 
@@ -22,15 +16,20 @@ namespace LeaveRequestSystem.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly AppData _db;
-    private readonly PasswordHasher<User> hasher;
-    private readonly string _jwtKey;
-    public AuthController(IConfiguration config, AppData db)
-    {
-        _db = db;
-        hasher = new PasswordHasher<User>();
-        _jwtKey = config["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured.");
+    private readonly AuthService authRepository;
 
+    public AuthController(AuthService authRepository)
+    {
+        this.authRepository = authRepository;
+    }
+
+
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+    {
+        var response = await authRepository.Login(dto);
+        return Ok(response); // يطلع الـ token والمعلومات كلها بشكل صحيح
     }
 
 
@@ -45,5 +44,4 @@ public class AuthController : ControllerBase
 
 
 
-    
 }

@@ -1,7 +1,11 @@
 using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Domain.Repositories;
-using LeaveRequestSystem.Data; // لازم عندك DbContext هنا
+using LeaveRequestSystem.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
+
+
+
 namespace LeaveRequestSystem.Infrastructure.Repositories
 {
     public class LeaveRequestRepository : ILeaveRequestRepository
@@ -31,7 +35,7 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task <List<LeaveRequest>> GetAllAsync()
+        public async Task<List<LeaveRequest>> GetAllAsync()
         {
             return await _db.LeaveRequests.ToListAsync();
         }

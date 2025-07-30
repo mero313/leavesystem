@@ -4,21 +4,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http.HttpResults;
-using LeaveRequestSystem.Domain.Entities;
-using System.Threading.Tasks;
-using System;
-using LeaveRequestSystem.Domain.Enums;
+
+
+
+
 
 namespace LeaveRequestSystem.Application.Services
 {
     public class AuthService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAuthRepository _userRepository;
         private readonly IConfiguration _config;
 
-        public AuthService(IUserRepository userRepository, IConfiguration config)
+        public AuthService(IAuthRepository userRepository, IConfiguration config)
         {
             _userRepository = userRepository;
             _config = config;
@@ -26,14 +24,19 @@ namespace LeaveRequestSystem.Application.Services
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
         {
-            
+
             var user = await _userRepository.GetByUsernameAsync(dto.Username);
-            var isPasswordValid  = BCrypt.Net.BCrypt.Verify(dto.Password, user?.PasswordHash);
-            if (user == null || !isPasswordValid)
+            if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
-            
+
+            var isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            if (!isPasswordValid)
+            {
+                throw new UnauthorizedAccessException("Invalid username or password");
+            }
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -44,7 +47,7 @@ namespace LeaveRequestSystem.Application.Services
             };
 
             var keyString = _config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString ));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.UtcNow.AddDays(1);
 

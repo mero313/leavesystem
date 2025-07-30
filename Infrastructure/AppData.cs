@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using LeaveRequestSystem.Domain.Entities;
-using LeaveRequestSystem.Entities;
 
-namespace LeaveRequestSystem.Data
+
+namespace LeaveRequestSystem.Infrastructure.Data
 {
     public class AppData : DbContext
     {

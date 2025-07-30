@@ -1,4 +1,4 @@
-using LeaveRequestSystem.Data;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;              // 👈 هذا ضروري
 using System.Text;              
@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using LeaveRequestSystem.Application.Services;
 using LeaveRequestSystem.Infrastructure.Repositories;
 using LeaveRequestSystem.Domain.Repositories;
+using LeaveRequestSystem.Infrastructure.Data;
+using LeaveRequestSystem.Application.DTOs;
+using LeaveRequestSystem.Domain.Entities;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +65,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
 builder.Services.AddScoped<LeaveRequestService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<AuthService>();
 
 
 var app = builder.Build();

@@ -11,7 +11,7 @@ namespace LeaveRequestSystem.Domain.Entities
 
 
         [Required]
-        public DateTime FromDate { get; set; }
+        public DateTime FromDate { get; set; } 
 
         [Required]
         public DateTime ToDate { get; set; }
