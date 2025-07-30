@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Services;
+using LeaveRequestSystem.Application.Mappers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
@@ -15,8 +17,9 @@ namespace LeaveRequestSystem.Api.Controllers
             _service = service;
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateLeaveRequestDto dto )
+        public async Task<IActionResult> Create([FromBody] LeaveRequestRequestDto dto )
         {
             // فرضاً تجيب userId من التوكن أو ثابت مؤقتاً (نجربه)
             int userId = 1; // لازم تعدله بالواقع عال JWT
@@ -24,6 +27,8 @@ namespace LeaveRequestSystem.Api.Controllers
             return Ok(response );
         }
 
+        
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetRequestsForUser(int userId)
         {

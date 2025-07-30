@@ -31,6 +31,9 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         {
             return await _db.Users.FindAsync(id);
         }
+
+
+        
         public async Task AddAsync(User user)
         {
             _db.Users.Add(user);

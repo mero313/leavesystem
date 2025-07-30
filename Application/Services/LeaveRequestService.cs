@@ -13,9 +13,9 @@ namespace LeaveRequestSystem.Application.Services
             this.repo = repo;
         }
 
-        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(CreateLeaveRequestDto dto, int userId)
+        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId)
         {
-            var entity = LeaveRequestMapper.CreateLeaveRequest(dto);
+            var entity = LeaveRequestMapper.CreateLeaveRequest(dto );
             await repo.AddAsync(entity);
             return LeaveRequestMapper.ToResponseDto(entity);
         }

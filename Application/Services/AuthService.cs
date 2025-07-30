@@ -4,6 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using LeaveRequestSystem.Application.Mappers;
+using LeaveRequestSystem.Domain.Entities;
+
 
 
 
@@ -60,8 +63,45 @@ namespace LeaveRequestSystem.Application.Services
             return new LoginResponseDto
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiry
+                Expiration = expiry,
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Name = user.Name,
+                    Email = user.Email ?? string.Empty, // Handle null email
+                    Department = user.Department ?? string.Empty,
+                    Role = user.Role, // Assuming Role is an enum, convert to string
+                    IsActive = user.IsActive
+                    
+                    
+                }
             };
+        }
+       
+        public async Task<UserDto> Register(RegisterRequestDto dto)
+        {
+
+            if (string.IsNullOrEmpty(dto.Username) || string.IsNullOrEmpty(dto.Password))
+            {
+                throw new ArgumentException("Username and password are required");
+            }
+            var existingUser = await _userRepository.GetByUsernameAsync(dto.Username);
+            if (existingUser != null)
+            {
+                throw new Exception("Username already exists");
+
+            }
+            var user = RegisterMapper.ToUserEntity(dto);
+            await _userRepository.AddAsync(user);
+
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+            };
+
         }
     }
 }

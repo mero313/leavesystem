@@ -5,7 +5,7 @@ using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Application.Services;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -35,6 +35,21 @@ public class AuthController : ControllerBase
 
 
 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto)
+    {
+        var user = await authRepository.Register(dto);
+        return Ok(new
+        {
+            message = "User registered successfully",
+            user = user.Id,
+            username = user.Username,
+            
+
+    });
+      
+
+    }
 
 
 

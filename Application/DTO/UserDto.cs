@@ -12,8 +12,9 @@ namespace LeaveRequestSystem.Application.DTOs
         public string Email { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
         public Role Role { get; set; } = Role.EMPLOYEE;
-        public string CreatedAt { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } 
+    
+      
     }
 }
 
