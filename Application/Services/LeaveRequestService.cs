@@ -6,35 +6,35 @@ namespace LeaveRequestSystem.Application.Services
 {
     public class LeaveRequestService
     {
-        private readonly ILeaveRequestRepository repo;
+        private readonly ILeaveRequestRepository leaveRequestRepository;
 
         public LeaveRequestService(ILeaveRequestRepository repo)
         {
-            this.repo = repo;
+            this.leaveRequestRepository = repo;
         }
 
         public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId)
         {
-            var entity = LeaveRequestMapper.CreateLeaveRequest(dto );
-            await repo.AddAsync(entity);
+            var entity = LeaveRequestMapper.CreateLeaveRequest(dto, userId);
+            await leaveRequestRepository.AddAsync(entity);
             return LeaveRequestMapper.ToResponseDto(entity);
         }
 
         public async Task<List<LeaveRequestResponseDto>> GetRequestsForUserAsync(int userId)
         {
-            var requests = await repo.GetByUserIdAsync(userId);
+            var requests = await leaveRequestRepository.GetByUserIdAsync(userId);
             return requests.Select(LeaveRequestMapper.ToResponseDto).ToList();
         }
 
         public async Task<LeaveRequestResponseDto?> GetRequestByIdAsync(int id)
         {
-            var request = await repo.GetByIdAsync(id);
+            var request = await leaveRequestRepository.GetByIdAsync(id);
             return request != null ? LeaveRequestMapper.ToResponseDto(request) : null;
         }
 
         public async Task<List<LeaveRequestResponseDto>> GetAllRequestsAsync()
         {
-            var requests = await repo.GetAllAsync();
+            var requests = await leaveRequestRepository.GetAllAsync();
             return requests.Select(LeaveRequestMapper.ToResponseDto).ToList();
         }
     }

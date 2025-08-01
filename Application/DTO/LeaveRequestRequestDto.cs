@@ -13,7 +13,6 @@ namespace LeaveRequestSystem.Application.DTOs
     public class LeaveRequestRequestDto
 
     {
-        public int UserId { get; set; }
         [Required(ErrorMessage = "تاريخ البداية مطلوب")]
         public DateTime FromDate { get; set; }
 
@@ -24,6 +23,6 @@ namespace LeaveRequestSystem.Application.DTOs
 
         [StringLength(500, ErrorMessage = "سبب الإجازة يجب أن يكون أقل من 500 حرف")]
         public string Reason { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
+       
     }
 }

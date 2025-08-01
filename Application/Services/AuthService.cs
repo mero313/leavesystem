@@ -16,19 +16,19 @@ namespace LeaveRequestSystem.Application.Services
 {
     public class AuthService
     {
-        private readonly IAuthRepository _userRepository;
-        private readonly IConfiguration _config;
+        private readonly IAuthRepository authRepository;
+        private readonly IConfiguration config;
 
-        public AuthService(IAuthRepository userRepository, IConfiguration config)
+        public AuthService(IAuthRepository _authRepository, IConfiguration _config)
         {
-            _userRepository = userRepository;
-            _config = config;
+            authRepository = _authRepository;
+            config = _config;
         }
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
         {
 
-            var user = await _userRepository.GetByUsernameAsync(dto.Username);
+            var user = await authRepository.GetByUsernameAsync(dto.Username);
             if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
@@ -49,7 +49,7 @@ namespace LeaveRequestSystem.Application.Services
                 new Claim("Department", user.Department ?? string.Empty),
             };
 
-            var keyString = _config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
+            var keyString = config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.UtcNow.AddDays(1);
@@ -60,25 +60,12 @@ namespace LeaveRequestSystem.Application.Services
                 signingCredentials: creds
             );
 
-            return new LoginResponseDto
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiry,
-                User = new UserDto
-                {
-                    Id = user.Id,
-                    Username = user.Username,
-                    Name = user.Name,
-                    Email = user.Email ?? string.Empty, // Handle null email
-                    Department = user.Department ?? string.Empty,
-                    Role = user.Role, // Assuming Role is an enum, convert to string
-                    IsActive = user.IsActive
-                    
-                    
-                }
-            };
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Login_register_Mapper.ToLoginResponseDto(user, tokenString);
+
         }
-       
+
         public async Task<UserDto> Register(RegisterRequestDto dto)
         {
 
@@ -86,14 +73,14 @@ namespace LeaveRequestSystem.Application.Services
             {
                 throw new ArgumentException("Username and password are required");
             }
-            var existingUser = await _userRepository.GetByUsernameAsync(dto.Username);
+            var existingUser = await authRepository.GetByUsernameAsync(dto.Username);
             if (existingUser != null)
             {
                 throw new Exception("Username already exists");
 
             }
-            var user = RegisterMapper.ToUserEntity(dto);
-            await _userRepository.AddAsync(user);
+            var user = Login_register_Mapper.ToUserEntity(dto);
+            await authRepository.AddAsync(user);
 
 
             return new UserDto

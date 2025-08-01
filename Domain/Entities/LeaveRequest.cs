@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations;
 using LeaveRequestSystem.Domain.Enums;
 namespace LeaveRequestSystem.Domain.Entities
@@ -9,14 +8,14 @@ namespace LeaveRequestSystem.Domain.Entities
         public int Id { get; set; }
         public int UserId { get; set; }  // منو صاحب الإجازة
 
+        public User User{ get; set; } = null!; // لازم يكون موجود 
 
-        [Required]
+
+        
         public DateTime FromDate { get; set; } 
 
-        [Required]
         public DateTime ToDate { get; set; }
 
-        [Required]
         public LeaveType LeaveType { get; set; }
 
         [StringLength(500)]

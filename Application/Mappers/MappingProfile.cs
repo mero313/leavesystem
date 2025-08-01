@@ -9,11 +9,11 @@ namespace LeaveRequestSystem.Application.Mappers
 {
     public static class LeaveRequestMapper
     {
-        public static LeaveRequest CreateLeaveRequest(LeaveRequestRequestDto dto)
+        public static LeaveRequest CreateLeaveRequest(LeaveRequestRequestDto dto, int userId)
         {
             return new LeaveRequest
             {
-                UserId = dto.UserId,
+                UserId = userId,
                 FromDate = dto.FromDate,
                 ToDate = dto.ToDate,
                 Reason = dto.Reason,
@@ -22,6 +22,7 @@ namespace LeaveRequestSystem.Application.Mappers
                 Status = LeaveStatus.Pending,
                 CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) // Adjusting for timezone if necessary
             };
+
         }
 
         public static LeaveRequestResponseDto ToResponseDto(LeaveRequest entity)
@@ -29,6 +30,7 @@ namespace LeaveRequestSystem.Application.Mappers
             return new LeaveRequestResponseDto
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
                 FromDate = entity.FromDate,
                 ToDate = entity.ToDate,
                 LeaveType = entity.LeaveType, // Assuming LeaveType is an enum
@@ -42,7 +44,7 @@ namespace LeaveRequestSystem.Application.Mappers
 
     }
 
-    public static class LoginMapper
+    public static class Login_register_Mapper
     {
         public static LoginResponseDto ToLoginResponseDto(User user, string token)
         {
@@ -64,14 +66,10 @@ namespace LeaveRequestSystem.Application.Mappers
 
 
                 }
-                
+
             };
         }
-    }
 
-           
-    public static class RegisterMapper
-    {
         public static User ToUserEntity(RegisterRequestDto dto)
         {
             return new User
@@ -87,6 +85,8 @@ namespace LeaveRequestSystem.Application.Mappers
             };
         }
     }
+
+
 
 
 }

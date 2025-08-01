@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    [Migration("20250728133503_datatime")]
-    partial class  datatime 
+    [Migration("20250801154517_adduserid")]
+    partial class adduserid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,10 +51,12 @@ namespace LeaveRequestSystem.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("LeaveRequests");
                 });
 
-            modelBuilder.Entity("LeaveRequestSystem.Entities.User", b =>
+            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +67,6 @@ namespace LeaveRequestSystem.Migrations
 
                     b.Property<string>("Department")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -79,7 +80,6 @@ namespace LeaveRequestSystem.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -91,7 +91,6 @@ namespace LeaveRequestSystem.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -101,13 +100,29 @@ namespace LeaveRequestSystem.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("LeaveRequestSystem.Entities.User", b =>
+            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.LeaveRequest", b =>
                 {
-                    b.HasOne("LeaveRequestSystem.Entities.User", "Manager")
+                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", "User")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.User", b =>
+                {
+                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId");
 
                     b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.User", b =>
+                {
+                    b.Navigation("LeaveRequests");
                 });
 #pragma warning restore 612, 618
         }
