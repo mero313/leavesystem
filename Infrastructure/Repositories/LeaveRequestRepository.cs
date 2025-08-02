@@ -12,6 +12,8 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
     {
         private readonly AppData _db;
 
+
+
         public LeaveRequestRepository(AppData db)
         {
             _db = db;
@@ -38,6 +40,12 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<List<LeaveRequest>> GetAllAsync()
         {
             return await _db.LeaveRequests.ToListAsync();
+        }
+
+        public async Task UpdateAsync(LeaveRequest entity)
+        {
+            _db.LeaveRequests.Update(entity);
+            await _db.SaveChangesAsync();
         }
     }
 }

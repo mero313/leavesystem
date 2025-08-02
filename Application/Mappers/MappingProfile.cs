@@ -76,7 +76,7 @@ namespace LeaveRequestSystem.Application.Mappers
             {
                 Username = dto.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Hash the password
-                Role = dto.Role,
+                Role = dto.Role, // Assuming Role is an enum
                 Name = dto.Name,
                 Email = dto.Email,
                 Department = dto.Department,

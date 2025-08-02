@@ -3,7 +3,7 @@ using LeaveRequestSystem.Domain.Entities;
 
 namespace LeaveRequestSystem.Domain.Repositories
 {
-    public interface IAuthRepository
+    public interface IUserRepository
     {
         Task<User?> GetByUsernameAsync(string username);
         Task AddAsync(User user);

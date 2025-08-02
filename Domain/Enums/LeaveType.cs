@@ -4,7 +4,7 @@ namespace LeaveRequestSystem.Domain.Enums
     {
         Pending,           // في الانتظار
         Manager_approved,  // موافقة المدير
-        Hr_pproved,       // موافقة الموارد البشرية
+        Hr_approved,       // موافقة الموارد البشرية
         Rejected,         // مرفوضة
         Cancelled       // ملغاة
     }

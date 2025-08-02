@@ -23,11 +23,13 @@ namespace LeaveRequestSystem.Domain.Entities
 
 
 
-        // إضافة خصائص مهمة للإجازات
+        ///////////////////////إضافة خصائص مهمة للإجازات
         public int? ManagerId { get; set; }  // من هو المدير المباشر
         public User? Manager { get; set; }   // Navigation property للمدير
-
-
+        /// <summary>
+        /// ////////
+        /// </summary>
+        /// 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
         public bool IsActive { get; set; } = true;
 

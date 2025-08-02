@@ -16,19 +16,19 @@ namespace LeaveRequestSystem.Application.Services
 {
     public class AuthService
     {
-        private readonly IAuthRepository authRepository;
+        private readonly IUserRepository UserRepository;
         private readonly IConfiguration config;
 
-        public AuthService(IAuthRepository _authRepository, IConfiguration _config)
+        public AuthService(IUserRepository _UserRepository, IConfiguration _config)
         {
-            authRepository = _authRepository;
+            UserRepository = _UserRepository;
             config = _config;
         }
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
         {
 
-            var user = await authRepository.GetByUsernameAsync(dto.Username);
+            var user = await UserRepository.GetByUsernameAsync(dto.Username);
             if (user == null || string.IsNullOrEmpty(user.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
@@ -73,14 +73,14 @@ namespace LeaveRequestSystem.Application.Services
             {
                 throw new ArgumentException("Username and password are required");
             }
-            var existingUser = await authRepository.GetByUsernameAsync(dto.Username);
+            var existingUser = await UserRepository.GetByUsernameAsync(dto.Username);
             if (existingUser != null)
             {
                 throw new Exception("Username already exists");
 
             }
             var user = Login_register_Mapper.ToUserEntity(dto);
-            await authRepository.AddAsync(user);
+            await UserRepository.AddAsync(user);
 
 
             return new UserDto

@@ -25,13 +25,16 @@ namespace LeaveRequestSystem.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
         
-        // public DateTime? UpdatedAt { get; set; }
+         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
 
         //     // معلومات الموافقة
-        //     public int? ApprovedByManagerId { get; set; }
-        //     public User? ApprovedByManager { get; set; }
-        //     public DateTime? ManagerApprovalDate { get; set; }
-        //     public string? ManagerComments { get; set; }
+             public int? ApprovedByManagerId { get; set; }
+             public User? ApprovedByManager { get; set; }
+
+
+             
+             public DateTime? ManagerApprovalDate { get; set; }
+             public string? ManagerComments { get; set; }
 
         //     public int? ApprovedByHRId { get; set; }
         //     public User? ApprovedByHR { get; set; }

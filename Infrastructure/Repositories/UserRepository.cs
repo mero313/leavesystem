@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeaveRequestSystem.Infrastructure.Repositories
 {
-    public class AuthRepository : IAuthRepository
+    public class UserRepository : IUserRepository
     {
         private readonly AppData _db;
 
-        public AuthRepository(AppData db)
+        public UserRepository(AppData db)
         {
             _db = db;
         }
@@ -33,12 +33,14 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         }
 
 
-        
+
         public async Task AddAsync(User user)
         {
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
         }
+        
+       
     }
 
 }
