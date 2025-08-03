@@ -8,10 +8,13 @@ namespace LeaveRequestSystem.Application.DTOs
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public Role Role { get; set; } = Role.EMPLOYEE;
+        public Role Role { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } =string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
+        public int ManagerId { get; set; } = 5; // Assuming a default manager ID, adjust as necessary
+        
+    
         
     }
 }

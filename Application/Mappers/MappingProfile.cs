@@ -55,16 +55,12 @@ namespace LeaveRequestSystem.Application.Mappers
                 User = new UserDto
                 {
                     Id = user.Id,
-
                     Username = user.Username,
                     Name = user.Name,
                     Email = user.Email ?? string.Empty, // Handle null email
                     Department = user.Department,
                     Role = user.Role, // Assuming Role is an enum, convert to string
                     IsActive = user.IsActive
-
-
-
                 }
 
             };
@@ -81,7 +77,8 @@ namespace LeaveRequestSystem.Application.Mappers
                 Email = dto.Email,
                 Department = dto.Department,
                 IsActive = true, // Assuming new users are active by default
-                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) // Adjusting for timezone if necessary
+                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) ,// Adjusting for timezone if necessary
+                ManagerId = dto.ManagerId // Assuming ManagerId is part of the registration request
             };
         }
     }

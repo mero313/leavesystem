@@ -97,6 +97,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+builder.Services.AddScoped<ByManagerService>();
 
 
 var app = builder.Build();

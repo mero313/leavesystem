@@ -44,6 +44,7 @@ public class AuthController : ControllerBase
             message = "User registered successfully",
             user = user.Id,
             username = user.Username,
+            Role = user.Role.ToString(),
             
 
     });

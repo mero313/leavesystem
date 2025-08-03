@@ -20,6 +20,7 @@ namespace LeaveRequestSystem.Application.Services
         // موافقة المدير المباشر
         public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId)
         {
+            
             var leave = await _leaveRepository.GetByIdAsync(leaveId);
             if (leave == null)
                 throw new Exception("طلب الإجازة غير موجود!");
@@ -38,6 +39,7 @@ namespace LeaveRequestSystem.Application.Services
             //leave.ManagerId = managerId; // حفظ معرف المدير الذي وافق
 
             await _leaveRepository.UpdateAsync(leave);
+        
 
             return LeaveRequestMapper.ToResponseDto(leave);
         }

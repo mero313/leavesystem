@@ -5,7 +5,7 @@ using LeaveRequestSystem.Application.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace LeaveRequestSystem.Api.Controllers
+namespace LeaveRequestSystem.Api.Controllers.EMPLOYEE
 {
     [ApiController]
     [Route("api/[controller]")]

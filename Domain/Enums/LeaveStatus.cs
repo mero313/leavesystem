@@ -1,13 +1,11 @@
-
-
-
 namespace LeaveRequestSystem.Domain.Enums
 {
-    public enum LeaveType
+    public enum LeaveStatus
     {
-        Annual,  // إجازة سنوية
-        Sick,      // إجازة مرضية          
-        Temporary
+        Pending,           // في الانتظار
+        Manager_approved,  // موافقة المدير
+        Hr_approved,       // موافقة الموارد البشرية
+        Rejected,         // مرفوضة
+        Cancelled       // ملغاة
     }
-
 }

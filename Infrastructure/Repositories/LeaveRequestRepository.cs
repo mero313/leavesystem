@@ -1,7 +1,6 @@
 using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Infrastructure.Data;
-
 using Microsoft.EntityFrameworkCore;
 
 

@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using LeaveRequestSystem.Application.Mappers;
-using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Domain.Enums;
 
 
 
@@ -47,7 +47,11 @@ namespace LeaveRequestSystem.Application.Services
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim("Email", user.Email ?? string.Empty),
                 new Claim("Department", user.Department ?? string.Empty),
+                new Claim("IsActive", user.IsActive.ToString()),
+                new Claim("ManagerId", user.ManagerId?.ToString() ?? string.Empty)
             };
+            Console.WriteLine($"ManagerId عند تسجيل الدخول: {user.ManagerId}");
+
 
             var keyString = config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
@@ -79,6 +83,17 @@ namespace LeaveRequestSystem.Application.Services
                 throw new Exception("Username already exists");
 
             }
+
+            /////////////////////////////////////////////////
+            var email = dto.Email?.ToUpper() ?? "";
+
+            if (email.EndsWith("@MANAGER"))
+                dto.Role = Role.MANAGER;
+            else if (email.EndsWith("@HR"))
+                dto.Role = Role.HR;
+            else
+                dto.Role = Role.EMPLOYEE;
+
             var user = Login_register_Mapper.ToUserEntity(dto);
             await UserRepository.AddAsync(user);
 
@@ -87,6 +102,8 @@ namespace LeaveRequestSystem.Application.Services
             {
                 Id = user.Id,
                 Username = user.Username,
+                Role = user.Role,
+
             };
 
         }
