@@ -1,21 +1,35 @@
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Mappers;
+using LeaveRequestSystem.Migrations;
 
 namespace LeaveRequestSystem.Application.Services
 {
     public class LeaveRequestService
     {
         private readonly ILeaveRequestRepository leaveRequestRepository;
-
-        public LeaveRequestService(ILeaveRequestRepository repo)
+        private readonly IUserRepository _userRepository;
+        public LeaveRequestService(ILeaveRequestRepository repo, IUserRepository userRepository)
         {
+            this._userRepository = userRepository;
+
             this.leaveRequestRepository = repo;
+
         }
 
         public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId)
         {
-            var entity = LeaveRequestMapper.CreateLeaveRequest(dto, userId);
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not authenticated");
+            }
+
+            if (user.ManagerId == null)
+            {
+                throw new Exception("الموظف غير مرتبط بأي مدير، يرجى ربط الحساب بمدير.");
+            }
+            var entity = LeaveRequestMapper.CreateLeaveRequest(dto, userId );
             await leaveRequestRepository.AddAsync(entity);
             return LeaveRequestMapper.ToResponseDto(entity);
         }

@@ -2,6 +2,7 @@ using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Domain.Enums;
 using System;
+using LeaveRequestSystem.Migrations;
 
 
 
@@ -20,7 +21,9 @@ namespace LeaveRequestSystem.Application.Mappers
                 LeaveType = dto.LeaveType,
                 // Assuming Status is set to Pending by default, you can adjust this as needed
                 Status = LeaveStatus.Pending,
-                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) // Adjusting for timezone if necessary
+                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3), // Adjusting for timezone if necessary
+                // ManagerId = managerId // Assuming you want to set the manager ID here, if applicable
+                
             };
 
         }

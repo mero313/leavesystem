@@ -31,16 +31,17 @@ namespace LeaveRequestSystem.Application.Services
 
             if (leave.Status != LeaveStatus.Pending)
                 throw new InvalidOperationException("لا يمكن الموافقة على طلب ليس قيد الانتظار.");
+            
+
 
             leave.Status = LeaveStatus.Manager_approved;
             // ممكن تخزن تاريخ الموافقة من المدير هنا
-            //leave.ManagerApprovalDate = DateTime.UtcNow;
-            // تحديث حالة الإجازة في المستودع
-            //leave.ManagerId = managerId; // حفظ معرف المدير الذي وافق
+            leave.ManagerApprovalDate = DateTime.UtcNow + TimeSpan.FromHours(3); // Adjusting for timezone if necessary
+            leave.ApprovedByManagerId = managerId; // حفظ معرف المدير الذي وافق
+            leave.ManagerComments = "تمت الموافقة من قبل المدير"; // يمكنك تعديل التعليق
+
 
             await _leaveRepository.UpdateAsync(leave);
-        
-
             return LeaveRequestMapper.ToResponseDto(leave);
         }
 

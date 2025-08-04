@@ -84,7 +84,6 @@ namespace LeaveRequestSystem.Application.Services
 
             }
 
-            /////////////////////////////////////////////////
             var email = dto.Email?.ToUpper() ?? "";
 
             if (email.EndsWith("@MANAGER"))
