@@ -1,7 +1,6 @@
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Mappers;
-using LeaveRequestSystem.Migrations;
 
 namespace LeaveRequestSystem.Application.Services
 {
