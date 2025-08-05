@@ -80,7 +80,7 @@ namespace LeaveRequestSystem.Application.Mappers
                 Department = dto.Department,
                 IsActive = true, // Assuming new users are active by default
                 CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) ,// Adjusting for timezone if necessary
-                ManagerId = dto.ManagerId // Assuming ManagerId is part of the registration request
+                //ManagerId = dto.ManagerId // Assuming ManagerId is part of the registration request
             };
         }
     }

@@ -2,8 +2,8 @@ namespace LeaveRequestSystem.Domain.Enums
 {
      public enum Role
     {
-        HR,
-        MANAGER,
-        EMPLOYEE
+        HR, //0
+        MANAGER, //1
+        EMPLOYEE //2
     }
 }

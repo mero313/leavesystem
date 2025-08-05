@@ -22,7 +22,7 @@ namespace LeaveRequestSystem.Api.Controllers.EMPLOYEE
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] LeaveRequestRequestDto dto )
         {
-            // فرضاً تجيب userId من التوكن أو ثابت مؤقتاً (نجربه)
+            // فرضاً تجيب userId من التوكن $أو ثابت مؤقتاً (نجربه)
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdString))
                 return Unauthorized(new { message = "User not authenticated" });
