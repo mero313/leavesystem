@@ -20,6 +20,7 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
         }
 
         // موافقة المدير المباشر
+
         [HttpPost("{leaveId}/approve")]
         [Authorize(Roles = "MANAGER")] // فقط المدراء يقدرون ينفذون
         public async Task<IActionResult> ApproveByManager(int leaveId)
@@ -40,7 +41,7 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
         [Authorize(Roles = "MANAGER")]
         public async Task<IActionResult> RejectByManager(int leaveId)
         {
-            var managerIdString = User.Claims.FirstOrDefault(c => c.Type == "ManagerId")?.Value;
+            var managerIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(managerIdString))
                 return Unauthorized("لم يتم العثور على معرف المدير!");
             var managerId = int.Parse(managerIdString);
