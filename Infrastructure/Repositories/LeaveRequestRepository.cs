@@ -46,5 +46,13 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             _db.LeaveRequests.Update(entity);
             await _db.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<LeaveRequest>> GetByManagerIdAsync(int managerId)
+        {
+            return await _db.LeaveRequests
+                .Include(l => l.User)                            // نضمن تحميل اليوزر
+                .Where(l => l.User.ManagerId == managerId)       // فلترة حسب المدير
+                .ToListAsync();
+        }
     }
 }

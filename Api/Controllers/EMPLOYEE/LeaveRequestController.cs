@@ -32,7 +32,7 @@ namespace LeaveRequestSystem.Api.Controllers.EMPLOYEE
 
         }
 
-
+        // جلب طلبات الإجازة للمستخدم
         [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetRequestsForUser(int userId)

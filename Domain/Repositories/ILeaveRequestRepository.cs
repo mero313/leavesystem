@@ -8,8 +8,8 @@ namespace LeaveRequestSystem.Domain.Repositories
         Task<LeaveRequest?> GetByIdAsync(int id);
         Task<List<LeaveRequest>> GetByUserIdAsync(int userId);
         Task<List<LeaveRequest>> GetAllAsync();
-
         Task UpdateAsync(LeaveRequest entity);
+        Task<IEnumerable<LeaveRequest>> GetByManagerIdAsync(int managerId);
         
 
 

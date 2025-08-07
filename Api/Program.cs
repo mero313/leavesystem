@@ -8,6 +8,7 @@ using LeaveRequestSystem.Infrastructure.Repositories;
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,6 +100,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddScoped<ByManagerService>();
 
+// Add JSON serialization options to handle enums as strings
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 

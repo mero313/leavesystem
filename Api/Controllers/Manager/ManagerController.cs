@@ -22,9 +22,9 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
         // موافقة المدير المباشر
         [HttpPost("{leaveId}/approve")]
         [Authorize(Roles = "MANAGER")] // فقط المدراء يقدرون ينفذون
-        public async Task<IActionResult> ApproveByManager(int leaveId )
+        public async Task<IActionResult> ApproveByManager(int leaveId)
         {
-          
+
             // جلب managerId من الـ Claims
             var managerIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(managerIdString))
@@ -47,6 +47,23 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
 
             var response = await managerService.RejectByManagerAsync(leaveId, managerId);
             return Ok(response);
+        }
+
+        // جلب طلبات الإجازة للمدير
+        // GET api/manager/pending
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetRequestsForManager()
+        {
+            // 1) جلب Id المدير من الكليمات
+            var managerIdString = User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
+                .Value;
+            if (!int.TryParse(managerIdString, out var managerId))
+                return Unauthorized("لم يتم العثور على معرف المدير!");
+
+            // 2) استدعاء السيرفس
+            var result = await managerService.GetRequestsForManagerAsync(managerId);
+            return Ok(result);
         }
 
 

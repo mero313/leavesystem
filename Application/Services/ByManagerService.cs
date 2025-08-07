@@ -20,7 +20,7 @@ namespace LeaveRequestSystem.Application.Services
         // موافقة المدير المباشر
         public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId)
         {
-            
+
             var leave = await _leaveRepository.GetByIdAsync(leaveId);
             if (leave == null)
                 throw new Exception("طلب الإجازة غير موجود!");
@@ -31,7 +31,7 @@ namespace LeaveRequestSystem.Application.Services
 
             if (leave.Status != LeaveStatus.Pending)
                 throw new InvalidOperationException("لا يمكن الموافقة على طلب ليس قيد الانتظار.");
-            
+
 
 
             leave.Status = LeaveStatus.Manager_approved;
@@ -64,6 +64,19 @@ namespace LeaveRequestSystem.Application.Services
             await _leaveRepository.UpdateAsync(leave);
 
             return LeaveRequestMapper.ToResponseDto(leave);
+        }
+
+
+        // جلب طلبات الإجازة للمدير
+         public async Task<IEnumerable<LeaveRequestResponseDto>> GetRequestsForManagerAsync(int managerId)
+        {
+            var leaves = await _leaveRepository.GetByManagerIdAsync(managerId);
+            // لو تريد فقط الطلبات في حالة Pending:
+             leaves = leaves.Where(l => l.Status == LeaveStatus.Pending);
+
+            return leaves
+                .Select(LeaveRequestMapper.ToResponseDto)
+                .ToList();
         }
     }
 }
