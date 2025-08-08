@@ -22,7 +22,7 @@ namespace LeaveRequestSystem.Application.Mappers
                 Status = LeaveStatus.Pending,
                 CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3), // Adjusting for timezone if necessary
                 // ManagerId = managerId // Assuming you want to set the manager ID here, if applicable
-                
+                UpdatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) // Adjusting for timezone if necessary
             };
 
         }
