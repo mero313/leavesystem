@@ -5,6 +5,8 @@ using System.Security.Claims;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
+    // Controller for HR-related operations
+    
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "HR")]

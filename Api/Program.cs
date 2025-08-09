@@ -99,6 +99,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddScoped<ByManagerService>();
+builder.Services.AddScoped<HRService>();
+// Register the new services
+builder.Services.AddScoped<HRService>();
+// builder.Services.AddScoped<UserManagementService>();
+// builder.Services.AddScoped<LeaveValidationService>();
 
 // Add JSON serialization options to handle enums as strings
 builder.Services.AddControllers()
