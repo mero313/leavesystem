@@ -33,6 +33,12 @@ namespace LeaveRequestSystem.Application.Services
             if (leave.Status != LeaveStatus.Manager_approved)
                 throw new InvalidOperationException("Leave must be approved by manager first!");
 
+            if (leave.Status == LeaveStatus.Hr_approved )
+                throw new InvalidOperationException("Leave request is already approved by HR!");
+
+            if (leave.Status == LeaveStatus.Rejected)
+                throw new InvalidOperationException("Leave request is rejected by HR!");
+
             leave.Status = LeaveStatus.Hr_approved;
             leave.UpdatedAt = DateTime.UtcNow + TimeSpan.FromHours(3);
 
@@ -50,6 +56,9 @@ namespace LeaveRequestSystem.Application.Services
             var hrUser = await _userRepository.GetByIdAsync(hrUserId);
             if (hrUser == null || hrUser.Role != Role.HR)
                 throw new UnauthorizedAccessException("Only HR can perform this action!");
+
+            if (leave.Status == LeaveStatus.Hr_approved)
+                throw new InvalidOperationException("Leave request is already approved by HR!");
 
             leave.Status = LeaveStatus.Rejected;
             leave.UpdatedAt = DateTime.UtcNow + TimeSpan.FromHours(3);
