@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using LeaveRequestSystem.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LeaveRequestSystem.Infrastructure.Data
 {
@@ -30,7 +31,26 @@ namespace LeaveRequestSystem.Infrastructure.Data
                 .HasForeignKey(lr => lr.ApprovedByManagerId) // اسم الـ FK
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // تقدر تضيف هنا علاقات إضافية حسب الحاجة
+
+            // Converter يقصّ الميلي ثانية (يخلي الدقة لثواني فقط)
+            var secondPrecisionConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.AddTicks(-(v.Ticks % TimeSpan.TicksPerSecond)), // عند الحفظ
+                v => v.AddTicks(-(v.Ticks % TimeSpan.TicksPerSecond))  // عند القراءة
+            );
+
+            // طبّقه على الخصائص اللي تريدها (مثلاً FromDate و ToDate)
+            modelBuilder.Entity<LeaveRequest>()
+                .Property(x => x.ToDate)
+                .HasConversion(secondPrecisionConverter);
+
+            modelBuilder.Entity<LeaveRequest>()
+                .Property(x => x.FromDate)
+                .HasConversion(secondPrecisionConverter);
+
+                 modelBuilder.Entity<LeaveRequest>()
+                .Property(x => x.CreatedAt)
+                .HasConversion(secondPrecisionConverter);
+
         }
     }
 }

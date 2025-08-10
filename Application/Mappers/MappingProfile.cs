@@ -33,6 +33,7 @@ namespace LeaveRequestSystem.Application.Mappers
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
+                UserName = entity.User?.Username ?? string.Empty, // Assuming you want to include the username
                 FromDate = entity.FromDate,
                 ToDate = entity.ToDate,
                 LeaveType = entity.LeaveType, // Assuming LeaveType is an enum

@@ -53,7 +53,7 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
         // جلب طلبات الإجازة للمدير
         // GET api/manager/pending
         [HttpGet("pending")]
-        public async Task<IActionResult> GetRequestsForManager()
+        public async Task<IActionResult> GetRequestsForManagerAsync()
         {
             // 1) جلب Id المدير من الكليمات
             var managerIdString = User.Claims

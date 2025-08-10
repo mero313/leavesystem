@@ -2,6 +2,9 @@ using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using LeaveRequestSystem.Domain.Enums;
+
 
 
 
@@ -32,7 +35,7 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<List<LeaveRequest>> GetByUserIdAsync(int userId)
         {
             return await _db.LeaveRequests
-                .Where(lr => lr.UserId == userId)
+                .Where(lr => lr.UserId == userId).OrderByDescending(lr => lr.Id)
                 .ToListAsync();
         }
 
@@ -47,12 +50,14 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<LeaveRequest>> GetByManagerIdAsync(int managerId)
+        public async Task<IEnumerable<LeaveRequest>> GetPendingByManagerIdAsync(int managerId)
         {
             return await _db.LeaveRequests
-                .Include(l => l.User)                            // نضمن تحميل اليوزر
-                .Where(l => l.User.ManagerId == managerId)       // فلترة حسب المدير
-                .ToListAsync();
+             .Include(l => l.User)                         // <-- مهم حتى يمتلئ UserName بالمابر
+             .Where(l => l.User.ManagerId == managerId
+                         && l.Status == LeaveStatus.Pending).OrderByDescending(l => l.Id)
+             .ToListAsync();
+
         }
     }
 }

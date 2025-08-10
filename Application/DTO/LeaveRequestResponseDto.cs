@@ -10,6 +10,7 @@ namespace LeaveRequestSystem.Application.DTOs
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public string UserName { get; set; } = string.Empty; // Assuming you want to include the username
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public LeaveType LeaveType { get; set; }
