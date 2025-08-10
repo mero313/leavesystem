@@ -68,12 +68,21 @@ namespace LeaveRequestSystem.Application.Services
 
 
         // جلب طلبات الإجازة للمدير
-        public async Task<IEnumerable<LeaveRequestResponseDto>> GetRequestsForManagerAsync(int managerId)
+        public async Task<IEnumerable<LeaveRequestResponseDto>> GetPendingByManagerIdAsync(int managerId)
         {
             var leaves = await _leaveRepository.GetPendingByManagerIdAsync(managerId);
             // لو تريد فقط الطلبات في حالة Pending:
 
 
+            return leaves
+                .Select(LeaveRequestMapper.ToResponseDto)
+                .ToList();
+        }
+
+
+        public async Task<IEnumerable<LeaveRequestResponseDto>> GetAllRequests_approvedForManagerAsync(int managerId)
+        {
+            var leaves = await _leaveRepository.GetManagerApprovedRequests(managerId);
             return leaves
                 .Select(LeaveRequestMapper.ToResponseDto)
                 .ToList();

@@ -59,5 +59,14 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
              .ToListAsync();
 
         }
+
+        public async Task<IEnumerable<LeaveRequest>> GetManagerApprovedRequests(int managerId)
+        {
+            return await _db.LeaveRequests
+                .Include(l => l.User)
+                .Where(l => l.User.ManagerId == managerId
+                            && l.Status == LeaveStatus.Manager_approved).OrderByDescending(l => l.Id)
+                .ToListAsync();
+        }
     }
 }

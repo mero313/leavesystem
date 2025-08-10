@@ -47,9 +47,16 @@ namespace LeaveRequestSystem.Infrastructure.Data
                 .Property(x => x.FromDate)
                 .HasConversion(secondPrecisionConverter);
 
-                 modelBuilder.Entity<LeaveRequest>()
-                .Property(x => x.CreatedAt)
-                .HasConversion(secondPrecisionConverter);
+            modelBuilder.Entity<LeaveRequest>()
+           .Property(x => x.CreatedAt)
+           .HasConversion(secondPrecisionConverter);
+
+           modelBuilder.Entity<LeaveRequest>()
+           .Property(x => x.UpdatedAt)
+           .HasConversion(secondPrecisionConverter);
+                
+
+            
 
         }
     }

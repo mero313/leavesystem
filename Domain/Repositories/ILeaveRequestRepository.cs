@@ -10,8 +10,9 @@ namespace LeaveRequestSystem.Domain.Repositories
         Task<List<LeaveRequest>> GetAllAsync();
         Task UpdateAsync(LeaveRequest entity);
         Task<IEnumerable<LeaveRequest>> GetPendingByManagerIdAsync(int managerId);
+        Task<IEnumerable<LeaveRequest>> GetManagerApprovedRequests(int managerId);
         
 
-
+       
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
+using LeaveRequestSystem.Api.Controllers.Manager;
 
 namespace LeaveRequestSystem.Api.Controllers.Manager
 {
@@ -52,6 +53,7 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
 
         // جلب طلبات الإجازة للمدير
         // GET api/manager/pending
+        [Authorize(Roles = "MANAGER")]
         [HttpGet("pending")]
         public async Task<IActionResult> GetRequestsForManagerAsync()
         {
@@ -63,10 +65,23 @@ namespace LeaveRequestSystem.Api.Controllers.Manager
                 return Unauthorized("لم يتم العثور على معرف المدير!");
 
             // 2) استدعاء السيرفس
-            var result = await managerService.GetRequestsForManagerAsync(managerId);
+            var result = await managerService.GetPendingByManagerIdAsync(managerId);
             return Ok(result);
         }
 
 
+        [Authorize(Roles = "MANAGER")]
+        [HttpGet("approved")]
+        public async Task<IActionResult> getManagerApprovedRequests()
+        {
+            var managerIdString = User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
+                .Value;
+            if (!int.TryParse(managerIdString, out var managerId))
+                return Unauthorized("لم يتم العثور على معرف المدير!");
+
+            var result = await managerService.GetAllRequests_approvedForManagerAsync(managerId);
+            return Ok(result);
+        }
     }
 }
