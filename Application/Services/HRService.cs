@@ -33,7 +33,7 @@ namespace LeaveRequestSystem.Application.Services
             if (leave.Status != LeaveStatus.Manager_approved)
                 throw new InvalidOperationException("Leave must be approved by manager first!");
 
-            if (leave.Status == LeaveStatus.Hr_approved )
+            if (leave.Status == LeaveStatus.Hr_approved)
                 throw new InvalidOperationException("Leave request is already approved by HR!");
 
             if (leave.Status == LeaveStatus.Rejected)
@@ -67,7 +67,7 @@ namespace LeaveRequestSystem.Application.Services
             return LeaveRequestMapper.ToResponseDto(leave);
         }
 
-        // Get all pending HR approvals
+        // Get all pending HR approvals only
         public async Task<IEnumerable<LeaveRequestResponseDto>> GetPendingHRApprovalsAsync()
         {
             var leaves = await _leaveRepository.GetAllAsync();
@@ -98,5 +98,62 @@ namespace LeaveRequestSystem.Application.Services
                 Cancelled = leaves.Count(l => l.Status == LeaveStatus.Cancelled)
             };
         }
+
+        // Get all users in the system (HR function)
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            var users = await _userRepository.GetUsers();
+
+            return users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Name = u.Name,
+                Email = u.Email ?? "",
+                Department = u.Department,
+                Role = u.Role,
+                IsActive = u.IsActive
+            }).ToList();
+        }
+
+        // Get users by role
+        public async Task<List<UserDto>> GetUsersByRoleAsync(Role role)
+        {
+            var users = await _userRepository.GetUsers();
+            var filteredUsers = users.Where(u => u.Role == role).ToList();
+
+            return filteredUsers.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Name = u.Name,
+                Email = u.Email ?? "",
+                Department = u.Department,
+                Role = u.Role,
+                IsActive = u.IsActive
+            }).ToList();
+        }
+
+        
+         // Get users by department
+        public async Task<List<UserDto>> GetUsersByDepartmentAsync(string department)
+        {
+            var users = await _userRepository.GetUsers();
+            var filteredUsers = users.Where(u => u.Department.Equals(department, StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            return filteredUsers.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Name = u.Name,
+                Email = u.Email ?? "",
+                Department = u.Department,
+                Role = u.Role,
+                IsActive = u.IsActive
+            }).ToList();
+        }
+
+
+
     }
 }

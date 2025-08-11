@@ -105,6 +105,7 @@ builder.Services.AddScoped<HRService>();
 // builder.Services.AddScoped<UserManagementService>();
 // builder.Services.AddScoped<LeaveValidationService>();
 
+
 // Add JSON serialization options to handle enums as strings
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

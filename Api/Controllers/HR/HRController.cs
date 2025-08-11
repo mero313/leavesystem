@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using LeaveRequestSystem.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using LeaveRequestSystem.Domain.Enums;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
     // Controller for HR-related operations
-    
+
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "HR")]
@@ -129,5 +130,55 @@ namespace LeaveRequestSystem.Api.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
+
+        // Get all users in the system
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _hrService.GetAllUsersAsync();
+                return Ok(new
+                {
+                    success = true,
+                    count = users.Count,
+                    data = users
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        // Get users by role
+        [HttpGet("users/role/{role}")]
+        public async Task<IActionResult> GetUsersByRole(string role)
+        {
+            try
+            {
+                if (!Enum.TryParse< Role>(role, true, out var roleEnum))
+                {
+                    return BadRequest(new { success = false, message = "Invalid role specified" });
+                }
+
+                var users = await _hrService.GetUsersByRoleAsync(roleEnum);
+                return Ok(new
+                {
+                    success = true,
+                    role = role,
+                    count = users.Count,
+                    data = users
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
