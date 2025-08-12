@@ -116,6 +116,45 @@ namespace LeaveRequestSystem.Application.Services
             }).ToList();
         }
 
+        public async Task<List< UserDetailedDto >> GetAllUsersDetailedAsync()
+        {
+            var users = await _userRepository.GetUsers();
+            var userDetailsList = new List<UserDetailedDto>();
+
+            foreach (var user in users)
+            {
+                var manager = user.ManagerId.HasValue
+                    ? users.FirstOrDefault(u => u.Id == user.ManagerId.Value)
+                    : null;
+
+                var teamCount = user.Role == Role.MANAGER
+                    ? users.Count(u => u.ManagerId == user.Id)
+                    : 0;
+
+                userDetailsList.Add(new UserDetailedDto
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Name = user.Name,
+                    Email = user.Email ?? "",
+                    Department = user.Department,
+                    Role = user.Role.ToString(),
+                    IsActive = user.IsActive,
+                    CreatedAt = user.CreatedAt,
+                    ManagerId = user.ManagerId,
+                    ManagerName = manager?.Name,
+                    TeamMembersCount = teamCount
+                });
+            }
+
+            return userDetailsList;
+        }
+
+
+
+
+
+
         // Get users by role
         public async Task<List<UserDto>> GetUsersByRoleAsync(Role role)
         {
@@ -134,13 +173,13 @@ namespace LeaveRequestSystem.Application.Services
             }).ToList();
         }
 
-        
-         // Get users by department
+
+        // Get users by department
         public async Task<List<UserDto>> GetUsersByDepartmentAsync(string department)
         {
             var users = await _userRepository.GetUsers();
             var filteredUsers = users.Where(u => u.Department.Equals(department, StringComparison.OrdinalIgnoreCase)).ToList();
-            
+
             return filteredUsers.Select(u => new UserDto
             {
                 Id = u.Id,

@@ -152,6 +152,26 @@ namespace LeaveRequestSystem.Api.Controllers
             }
         }
 
+        [HttpGet("users/detailed")]
+        public async Task<IActionResult> GetAllUsersDetailed()
+        {
+            try
+            {
+                var users = await _hrService.GetAllUsersDetailedAsync();
+                return Ok(new
+                {
+                    success = true,
+                    count = users.Count,
+                    data = users
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+
 
 
         // Get users by role
@@ -160,7 +180,7 @@ namespace LeaveRequestSystem.Api.Controllers
         {
             try
             {
-                if (!Enum.TryParse< Role>(role, true, out var roleEnum))
+                if (!Enum.TryParse<Role>(role, true, out var roleEnum))
                 {
                     return BadRequest(new { success = false, message = "Invalid role specified" });
                 }
