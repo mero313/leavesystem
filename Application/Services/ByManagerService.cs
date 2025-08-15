@@ -17,75 +17,38 @@ namespace LeaveRequestSystem.Application.Services
             _userRepository = userRepository;
         }
 
-        // موافقة المدير المباشر
-        public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId)
+        public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId, string? reason)
         {
+            var leave = await _leaveRepository.GetByIdAsync(leaveId) ?? throw new Exception("Request not found");
+            var employee = await _userRepository.GetByIdAsync(leave.UserId) ?? throw new Exception("Employee not found");
 
-            var leave = await _leaveRepository.GetByIdAsync(leaveId);
-            if (leave == null)
-                throw new Exception("طلب الإجازة غير موجود!");
+            if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
+            if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");
 
-            var employee = await _userRepository.GetByIdAsync(leave.UserId);
-            if (employee == null || employee.ManagerId != managerId)
-                throw new UnauthorizedAccessException("غير مصرح لك بالموافقة على هذه الإجازة!");
-
-            if (leave.Status != LeaveStatus.Pending)
-                throw new InvalidOperationException("لا يمكن الموافقة على طلب ليس قيد الانتظار.");
-
-
-
-            leave.Status = LeaveStatus.Manager_approved;
-            // ممكن تخزن تاريخ الموافقة من المدير هنا
-            leave.ManagerApprovalDate = DateTime.UtcNow + TimeSpan.FromHours(3); // Adjusting for timezone if necessary
-            leave.ApprovedByManagerId = managerId; // حفظ معرف المدير الذي وافق
-            leave.ManagerComments = "تمت الموافقة من قبل المدير"; // يمكنك تعديل التعليق
-
+            leave.Status = LeaveStatus.ManagerApproved;
+            leave.ApprovedByManagerId = managerId;
+            leave.ManagerApprovalDate = DateTime.UtcNow;
+            leave.ManagerComments = reason;
 
             await _leaveRepository.UpdateAsync(leave);
             return LeaveRequestMapper.ToResponseDto(leave);
         }
 
-        // رفض من المدير المباشر
-        public async Task<LeaveRequestResponseDto> RejectByManagerAsync(int leaveId, int managerId)
+        public async Task<LeaveRequestResponseDto> RejectByManagerAsync(int leaveId, int managerId, string reason)
         {
-            var leave = await _leaveRepository.GetByIdAsync(leaveId);
-            if (leave == null)
-                throw new Exception("طلب الإجازة غير موجود!");
+            var leave = await _leaveRepository.GetByIdAsync(leaveId) ?? throw new Exception("Request not found");
+            var employee = await _userRepository.GetByIdAsync(leave.UserId) ?? throw new Exception("Employee not found");
 
-            var employee = await _userRepository.GetByIdAsync(leave.UserId);
-            if (employee == null || employee.ManagerId != managerId)
-                throw new UnauthorizedAccessException("غير مصرح لك برفض هذه الإجازة!");
-
-            if (leave.Status != LeaveStatus.Pending)
-                throw new InvalidOperationException("لا يمكن رفض طلب ليس قيد الانتظار.");
+            if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
+            if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");
 
             leave.Status = LeaveStatus.Rejected;
+            leave.ApprovedByManagerId = managerId;
+            leave.ManagerApprovalDate = DateTime.UtcNow;
+            leave.ManagerComments = reason;
 
             await _leaveRepository.UpdateAsync(leave);
-
             return LeaveRequestMapper.ToResponseDto(leave);
-        }
-
-
-        // جلب طلبات الإجازة للمدير
-        public async Task<IEnumerable<LeaveRequestResponseDto>> GetPendingByManagerIdAsync(int managerId)
-        {
-            var leaves = await _leaveRepository.GetPendingByManagerIdAsync(managerId);
-            // لو تريد فقط الطلبات في حالة Pending:
-
-
-            return leaves
-                .Select(LeaveRequestMapper.ToResponseDto)
-                .ToList();
-        }
-
-
-        public async Task<IEnumerable<LeaveRequestResponseDto>> GetAllRequests_approvedForManagerAsync(int managerId)
-        {
-            var leaves = await _leaveRepository.GetManagerApprovedRequests(managerId);
-            return leaves
-                .Select(LeaveRequestMapper.ToResponseDto)
-                .ToList();
         }
     }
 }

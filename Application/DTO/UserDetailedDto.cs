@@ -1,6 +1,4 @@
-
-using LeaveRequestSystem.Domain.Enums;
-
+// UserDetailedDto.cs
 namespace LeaveRequestSystem.Application.DTOs
 {
     public class UserDetailedDto
@@ -16,9 +14,5 @@ namespace LeaveRequestSystem.Application.DTOs
         public int? ManagerId { get; set; }
         public string? ManagerName { get; set; }
         public int TeamMembersCount { get; set; }
-
-
     }
 }
-
-

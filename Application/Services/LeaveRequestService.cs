@@ -1,6 +1,9 @@
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Mappers;
+using LeaveRequestSystem.Application.Services;
+using LeaveRequestSystem.Domain.Enums;
+using LeaveRequestSystem.Domain.Entities;
 
 namespace LeaveRequestSystem.Application.Services
 {
@@ -18,17 +21,37 @@ namespace LeaveRequestSystem.Application.Services
 
         public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not authenticated");
-            }
+            // 1) التحقق من المستخدم
+            var user = await _userRepository.GetByIdAsync(userId)
+                       ?? throw new UnauthorizedAccessException("User not authenticated");
 
+            // 2) التحقق من التواريخ
+            if (dto.FromDate.Date >= dto.ToDate.Date)
+                throw new ArgumentException("End date must be after start date");
+
+            // (اختياري) منع تقديم إجازة بتاريخ ماضي
+            if (dto.FromDate.Date < DateTime.UtcNow.Date)
+                throw new ArgumentException("Start date cannot be in the past");
+
+            // 3) لازم يكون مرتبط بمدير
             if (user.ManagerId == null)
-            {
-                throw new Exception("الموظف غير مرتبط بأي مدير، يرجى ربط الحساب بمدير.");
-            }
-            var entity = LeaveRequestMapper.CreateLeaveRequest(dto, userId );
+                throw new InvalidOperationException("الموظف غير مرتبط بأي مدير، يرجى ربط الحساب بمدير.");
+
+            // 4) التحقق من وجود المدير وصحته
+            var manager = await _userRepository.GetByIdAsync(user.ManagerId.Value);
+            if (manager == null || manager.Role != Role.MANAGER || !manager.IsActive)
+                throw new InvalidOperationException("مدير غير صالح أو غير موجود.");
+
+            // 5) التحقق من القسم (إذا شرط أساسي عندك)
+            if (user.DepartmentId == null)
+                throw new InvalidOperationException("الموظف غير مرتبط بأي قسم.");
+
+            // 6) (اختياري) منع تداخل الطلبات لنفس المستخدم
+            // افترض عندك دالة في الريبو:
+            // if (await leaveRequestRepository.ExistsOverlapAsync(userId, dto.FromDate, dto.ToDate))
+            //     throw new InvalidOperationException("لديك طلب إجازة يتداخل مع نفس الفترة.");
+
+            var entity = LeaveRequestMapper.CreateLeaveRequest(dto, userId);
             await leaveRequestRepository.AddAsync(entity);
             return LeaveRequestMapper.ToResponseDto(entity);
         }

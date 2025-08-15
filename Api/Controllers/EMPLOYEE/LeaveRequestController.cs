@@ -1,11 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Services;
-using LeaveRequestSystem.Application.Mappers;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace LeaveRequestSystem.Api.Controllers.EMPLOYEE
+namespace LeaveRequestSystem.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -20,27 +19,27 @@ namespace LeaveRequestSystem.Api.Controllers.EMPLOYEE
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] LeaveRequestRequestDto dto )
+        public async Task<IActionResult> Create([FromBody] LeaveRequestRequestDto dto)
         {
-            // فرضاً تجيب userId من التوكن $أو ثابت مؤقتاً (نجربه)
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdString))
-                return Unauthorized(new { message = "User not authenticated" });
-            var userId = int.Parse(userIdString);
-            var response = await _service.CreateLeaveRequestAsync(dto, userId);
-            return Ok (response);
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized(new { message = "No user in token" });
 
+      
+            var userId = int.Parse(userIdStr);
+            var res = await _service.CreateLeaveRequestAsync(dto, userId);
+            return Ok(res);
         }
 
-        // جلب طلبات الإجازة للمستخدم
         [Authorize]
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetRequestsForUser(int userId)
+        [HttpGet("my")]
+        public async Task<IActionResult> My()
         {
-            var requests = await _service.GetRequestsForUserAsync(userId);
-            return Ok(requests);
-        }
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized(new { message = "No user in token" });
 
-        // أضف أي Endpoint تحتاجه: GetById, Delete, Update...
+            var userId = int.Parse(userIdStr);
+            var res = await _service.GetRequestsForUserAsync(userId);
+            return Ok(res);
+        }
     }
 }

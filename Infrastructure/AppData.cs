@@ -11,6 +11,10 @@ namespace LeaveRequestSystem.Infrastructure.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<LeaveRequestHistory> LeaveRequestHistories { get; set; }
+        public DbSet<LeaveSettings> LeaveSettings { get; set; }   // انتبه: اسم الكلاس عندك "LeaveSettings" أو "LeaveRequestSetting"؟ خليه نفس اسم الكلاس بالضبط
+        public DbSet<Department> Departments { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,12 +55,84 @@ namespace LeaveRequestSystem.Infrastructure.Data
            .Property(x => x.CreatedAt)
            .HasConversion(secondPrecisionConverter);
 
-           modelBuilder.Entity<LeaveRequest>()
-           .Property(x => x.UpdatedAt)
-           .HasConversion(secondPrecisionConverter);
-                
+            modelBuilder.Entity<LeaveRequest>()
+            .Property(x => x.UpdatedAt)
+            .HasConversion(secondPrecisionConverter);
 
-            
+
+            // HR decision relationship (optional)
+            modelBuilder.Entity<LeaveRequest>()
+                .HasOne(lr => lr.ApprovedByHR)
+                .WithMany()
+                .HasForeignKey(lr => lr.ApprovedByHRId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // موجودة مسبقًا:
+            modelBuilder.Entity<LeaveRequest>()
+                .HasOne(lr => lr.ApprovedByManager)
+                .WithMany()
+                .HasForeignKey(lr => lr.ApprovedByManagerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // User ↔ Manager
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Manager)
+                .WithMany(m => m.Subordinates)
+                .HasForeignKey(u => u.ManagerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // User ↔ Department
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Department)
+                .WithMany(d => d.Users)
+                .HasForeignKey(u => u.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+
+            modelBuilder.Entity<LeaveRequestHistory>(b =>
+    {
+        b.HasKey(h => h.Id);
+
+        b.HasOne(h => h.LeaveRequest)
+       .WithMany(l => l.LeaveRequestHistory)                 // تأكّد LeaveRequest يحتوي ICollection<LeaveRequestHistory> History
+       .HasForeignKey(h => h.LeaveRequestId)
+       .OnDelete(DeleteBehavior.Cascade);
+
+        b.HasOne(h => h.ActionByUser)
+       .WithMany()
+       .HasForeignKey(h => h.ActionByUserId)
+       .OnDelete(DeleteBehavior.Restrict);
+    });
+
+
+            // User ↔ Manager
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Manager)
+                .WithMany(m => m.Subordinates)
+                .HasForeignKey(u => u.ManagerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // User ↔ Department
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Department)
+                .WithMany(d => d.Users)
+                .HasForeignKey(u => u.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // LeaveSettings ↔ Department
+            modelBuilder.Entity<LeaveSettings>(b =>
+            {
+                b.HasKey(s => s.Id);
+
+                b.HasOne(s => s.Department)
+                 .WithMany(d => d.Settings)
+                 .HasForeignKey(s => s.DepartmentId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                // كل قسم + نوع إجازة = إعداد واحد فقط
+                b.HasIndex(s => new { s.DepartmentId, s.LeaveType }).IsUnique();
+            });
 
         }
     }

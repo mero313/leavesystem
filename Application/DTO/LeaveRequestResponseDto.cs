@@ -1,8 +1,5 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using LeaveRequestSystem.Domain.Enums;
-
-
 
 namespace LeaveRequestSystem.Application.DTOs
 {
@@ -10,12 +7,13 @@ namespace LeaveRequestSystem.Application.DTOs
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string UserName { get; set; } = string.Empty; // Assuming you want to include the username
+        public string UserName { get; set; } = string.Empty;
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public LeaveType LeaveType { get; set; }
         public string Reason { get; set; } = string.Empty;
         public LeaveStatus Status { get; set; }
-        public string CreatedAt { get; set; } = string.Empty; // Assuming this is a formatted date string
+        // خليه string للعرض بفورمات، مثل ما يسوي المابر
+        public string CreatedAt { get; set; } = string.Empty;
     }
 }

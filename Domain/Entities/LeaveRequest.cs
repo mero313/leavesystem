@@ -1,19 +1,16 @@
-
 using System.ComponentModel.DataAnnotations;
 using LeaveRequestSystem.Domain.Enums;
+
 namespace LeaveRequestSystem.Domain.Entities
 {
     public class LeaveRequest
     {
         public int Id { get; set; }
-        public int UserId { get; set; }  // منو صاحب الإجازة
 
-        public User User{ get; set; } = null!; // لازم يكون موجود 
+        public int UserId { get; set; }
+        public User User { get; set; } = null!;
 
-
-        
-        public DateTime FromDate { get; set; } 
-
+        public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
 
         public LeaveType LeaveType { get; set; }
@@ -21,35 +18,25 @@ namespace LeaveRequestSystem.Domain.Entities
         [StringLength(500)]
         public string Reason { get; set; } = string.Empty;
 
-        public LeaveStatus Status { get; set; } 
+        public LeaveStatus Status { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
+        // ✅ خزن UTC فقط
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Manager decision
+        public int? ApprovedByManagerId { get; set; }
+        public User? ApprovedByManager { get; set; }
+        public DateTime? ManagerApprovalDate { get; set; }
+        public string? ManagerComments { get; set; }
+
+        // (اختياري) HR decision
+        public int? ApprovedByHRId { get; set; }
+        public User? ApprovedByHR { get; set; }
+        public DateTime? HRApprovalDate { get; set; }
+        public string? HRComments { get; set; }
+
         
-         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow + TimeSpan.FromHours(3);
-
-        //     // معلومات الموافقة
-             public int? ApprovedByManagerId { get; set; }
-             public User? ApprovedByManager { get; set; }
-
-
-             
-             public DateTime? ManagerApprovalDate { get; set; }
-             public string? ManagerComments { get; set; }
-
-        //     public int? ApprovedByHRId { get; set; }
-        //     public User? ApprovedByHR { get; set; }
-        //     public DateTime? HRApprovalDate { get; set; }
-        //     public string? HRComments { get; set; }
-
-        //     // Foreign Key → User
-        //     public int UserId { get; set; }
-        //     public User User { get; set; } = null!;
-
-        //     // حساب عدد الأيام
-        //     public int TotalDays => (ToDate - FromDate).Days + 1;
-
-        //     // التحقق من صحة التواريخ
-        //     public bool IsValidDateRange => FromDate <= ToDate && FromDate >= DateTime.Today;
-        // }
+         public ICollection<LeaveRequestHistory> LeaveRequestHistory  { get; set; } = new List<LeaveRequestHistory>();
     }
 }

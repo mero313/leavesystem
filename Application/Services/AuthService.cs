@@ -40,16 +40,21 @@ namespace LeaveRequestSystem.Application.Services
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim("Email", user.Email ?? string.Empty),
-                new Claim("Department", user.Department ?? string.Empty),
                 new Claim("IsActive", user.IsActive.ToString()),
                 new Claim("ManagerId", user.ManagerId?.ToString() ?? string.Empty)
+                
             };
+            if (user.DepartmentId.HasValue)
+                claims.Add(new Claim("DepartmentId", user.DepartmentId.Value.ToString()));
+
+            if (!string.IsNullOrWhiteSpace(user.Department?.Name))
+                claims.Add(new Claim("DepartmentName", user.Department!.Name));
             Console.WriteLine($"ManagerId عند تسجيل الدخول: {user.ManagerId}");
 
 
@@ -66,7 +71,7 @@ namespace LeaveRequestSystem.Application.Services
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Login_register_Mapper.ToLoginResponseDto(user, tokenString);
+            return AuthMapper.ToLoginResponseDto(user, tokenString);
 
         }
 
@@ -93,7 +98,7 @@ namespace LeaveRequestSystem.Application.Services
             else
                 dto.Role = Role.EMPLOYEE;
 
-            var user = Login_register_Mapper.ToUserEntity(dto);
+            var user = AuthMapper.ToUserEntity(dto);
             await UserRepository.AddAsync(user);
 
 

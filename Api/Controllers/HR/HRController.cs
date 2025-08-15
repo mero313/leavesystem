@@ -1,204 +1,63 @@
-using Microsoft.AspNetCore.Mvc;
-using LeaveRequestSystem.Application.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using LeaveRequestSystem.Application.DTOs;
+using LeaveRequestSystem.Application.Services;
 using System.Security.Claims;
-using LeaveRequestSystem.Domain.Enums;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
-    // Controller for HR-related operations
-
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/hr")]
     [Authorize(Roles = "HR")]
     public class HRController : ControllerBase
     {
         private readonly HRService _hrService;
+        private readonly UserService _userService;
 
-        public HRController(HRService hrService)
+        public HRController(HRService hrService, UserService userService)
         {
             _hrService = hrService;
+            _userService = userService;
         }
 
-        // Approve leave request by HR
-        [HttpPost("{leaveId}/approve")]
-        public async Task<IActionResult> ApproveByHR(int leaveId)
+        [HttpPost("approve/{leaveId:int}")]
+        public async Task<IActionResult> Approve(int leaveId, [FromBody] DecisionDto dto)
         {
-            try
-            {
-                var hrIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(hrIdString))
-                    return Unauthorized("HR user not found!");
+            var hrIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(hrIdStr)) return Unauthorized();
+            var hrId = int.Parse(hrIdStr);
 
-                var hrId = int.Parse(hrIdString);
-                var response = await _hrService.ApproveByHRAsync(leaveId, hrId);
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Leave request approved by HR successfully",
-                    data = response
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            var res = await _hrService.ApproveByHRAsync(leaveId, hrId, dto?.Reason);
+            return Ok(res);
         }
 
-        // Reject leave request by HR
-        [HttpPost("{leaveId}/reject")]
-        public async Task<IActionResult> RejectByHR(int leaveId, [FromBody] RejectRequestDto request)
+        [HttpPost("reject/{leaveId:int}")]
+        public async Task<IActionResult> Reject(int leaveId, [FromBody] DecisionDto dto)
         {
-            try
-            {
-                var hrIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(hrIdString))
-                    return Unauthorized("HR user not found!");
+            if (string.IsNullOrWhiteSpace(dto?.Reason))
+                return BadRequest(new { message = "Reason is required to reject" });
 
-                var hrId = int.Parse(hrIdString);
-                var response = await _hrService.RejectByHRAsync(leaveId, hrId, request.Reason);
+            var hrIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(hrIdStr)) return Unauthorized();
+            var hrId = int.Parse(hrIdStr);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Leave request rejected by HR",
-                    data = response
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            var res = await _hrService.RejectByHRAsync(leaveId, hrId, dto.Reason!);
+            return Ok(res);
         }
 
-        // Get pending HR approvals
-        [HttpGet("pending")]
-        public async Task<IActionResult> GetPendingHRApprovals()
+        [HttpPost("assign-manager")]
+        public async Task<IActionResult> AssignManager([FromBody] AssignManagerDto dto)
         {
-            try
-            {
-                var result = await _hrService.GetPendingHRApprovalsAsync();
-                return Ok(new
-                {
-                    success = true,
-                    count = result.Count(),
-                    data = result
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            
+            await _userService.AssignManagerAsync(dto.UserId, dto.DepartmentId, dto.PromoteToManager);
+            return Ok(new { message = "Updated" });
         }
 
-        // Get all leave requests
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllLeaves()
+        [HttpPost("toggle-active")]
+        public async Task<IActionResult> ToggleActive([FromBody] ToggleActiveDto dto)
         {
-            try
-            {
-                var result = await _hrService.GetAllLeavesForHRAsync();
-                return Ok(new
-                {
-                    success = true,
-                    count = result.Count(),
-                    data = result
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
+            await _userService.ToggleActiveAsync(dto.UserId, dto.IsActive);
+            return Ok(new { message = "Updated" });
         }
-
-        // Get leave statistics
-        [HttpGet("statistics")]
-        public async Task<IActionResult> GetStatistics()
-        {
-            try
-            {
-                var stats = await _hrService.GetLeaveStatisticsAsync();
-                return Ok(new
-                {
-                    success = true,
-                    data = stats
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-        }
-
-
-        // Get all users in the system
-        [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            try
-            {
-                var users = await _hrService.GetAllUsersAsync();
-                return Ok(new
-                {
-                    success = true,
-                    count = users.Count,
-                    data = users
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet("users/detailed")]
-        public async Task<IActionResult> GetAllUsersDetailed()
-        {
-            try
-            {
-                var users = await _hrService.GetAllUsersDetailedAsync();
-                return Ok(new
-                {
-                    success = true,
-                    count = users.Count,
-                    data = users
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-        }
-
-
-
-
-        // Get users by role
-        [HttpGet("users/role/{role}")]
-        public async Task<IActionResult> GetUsersByRole(string role)
-        {
-            try
-            {
-                if (!Enum.TryParse<Role>(role, true, out var roleEnum))
-                {
-                    return BadRequest(new { success = false, message = "Invalid role specified" });
-                }
-
-                var users = await _hrService.GetUsersByRoleAsync(roleEnum);
-                return Ok(new
-                {
-                    success = true,
-                    role = role,
-                    count = users.Count,
-                    data = users
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-        }
-
     }
 }

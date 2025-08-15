@@ -3,12 +3,11 @@ using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Domain.Enums;
 using System;
 
-
-
 namespace LeaveRequestSystem.Application.Mappers
 {
     public static class LeaveRequestMapper
     {
+        // من RequestDto -> Entity (للإنشاء)
         public static LeaveRequest CreateLeaveRequest(LeaveRequestRequestDto dto, int userId)
         {
             return new LeaveRequest
@@ -18,54 +17,54 @@ namespace LeaveRequestSystem.Application.Mappers
                 ToDate = dto.ToDate,
                 Reason = dto.Reason,
                 LeaveType = dto.LeaveType,
-                // Assuming Status is set to Pending by default, you can adjust this as needed
                 Status = LeaveStatus.Pending,
-                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3), // Adjusting for timezone if necessary
-                // ManagerId = managerId // Assuming you want to set the manager ID here, if applicable
-                UpdatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) // Adjusting for timezone if necessary
+                // خزّن دائمًا بتوقيت UTC. لا تزود +3 ساعات هنا.
+                CreatedAt = DateTime.UtcNow,
+                // إذا عندك UpdatedAt بالـ Entity خليه عند التعديل فقط
+                // UpdatedAt = DateTime.UtcNow
             };
-
         }
 
+        // من Entity -> ResponseDto (للعرض)
         public static LeaveRequestResponseDto ToResponseDto(LeaveRequest entity)
         {
             return new LeaveRequestResponseDto
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
-                UserName = entity.User?.Username ?? string.Empty, // Assuming you want to include the username
+                // إذا كنت تعمل Include(User) في الـ repo، إبقِ السطر، وإلا اشيله:
+                UserName = entity.User?.Username ?? string.Empty,
                 FromDate = entity.FromDate,
                 ToDate = entity.ToDate,
-                LeaveType = entity.LeaveType, // Assuming LeaveType is an enum
+                LeaveType = entity.LeaveType,
                 Reason = entity.Reason,
                 Status = entity.Status,
-                CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss") // Format as needed
+                // الفورمات يكون في الرد فقط—not in DB
+                CreatedAt = entity.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
             };
         }
-
-
-
     }
 
-    public static class Login_register_Mapper
+    // مابر موحّد للّوجن/الريجيستر
+    public static class AuthMapper
     {
         public static LoginResponseDto ToLoginResponseDto(User user, string token)
         {
             return new LoginResponseDto
             {
                 Token = token,
-                Expiration = DateTime.UtcNow.AddHours(1), // Assuming token expires in 1 hour
+                Expiration = DateTime.UtcNow.AddHours(1),
                 User = new UserDto
                 {
                     Id = user.Id,
                     Username = user.Username,
                     Name = user.Name,
-                    Email = user.Email ?? string.Empty, // Handle null email
-                    Department = user.Department,
-                    Role = user.Role, // Assuming Role is an enum, convert to string
+                    Email = user.Email ?? string.Empty,
+                    DepartmentId = user.DepartmentId,
+                    DepartmentName = user.Department?.Name ?? string.Empty,
+                    Role = user.Role,
                     IsActive = user.IsActive
                 }
-
             };
         }
 
@@ -74,19 +73,13 @@ namespace LeaveRequestSystem.Application.Mappers
             return new User
             {
                 Username = dto.Username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Hash the password
-                Role = dto.Role, // Assuming Role is an enum
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = dto.Role,
                 Name = dto.Name,
                 Email = dto.Email,
-                Department = dto.Department,
-                IsActive = true, // Assuming new users are active by default
-                CreatedAt = DateTime.UtcNow + TimeSpan.FromHours(3) ,// Adjusting for timezone if necessary
-                //ManagerId = dto.ManagerId // Assuming ManagerId is part of the registration request
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
             };
         }
     }
-
-
-
-
 }

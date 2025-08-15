@@ -1,87 +1,46 @@
-using Microsoft.AspNetCore.Mvc;
-using LeaveRequestSystem.Application.Services;
-using LeaveRequestSystem.Application.DTOs;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using LeaveRequestSystem.Application.DTOs;
+using LeaveRequestSystem.Application.Services;
 using System.Security.Claims;
-using LeaveRequestSystem.Api.Controllers.Manager;
 
-namespace LeaveRequestSystem.Api.Controllers.Manager
+namespace LeaveRequestSystem.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/manager")]
+    [Authorize(Roles = "MANAGER")]
     public class ManagerController : ControllerBase
     {
-        private readonly ByManagerService managerService;
+        private readonly ByManagerService _byManager;
 
-        public ManagerController(ByManagerService _managerService)
+        public ManagerController(ByManagerService byManager)
         {
-            managerService = _managerService;
+            _byManager = byManager;
         }
 
-        // موافقة المدير المباشر
-
-        [HttpPost("{leaveId}/approve")]
-        [Authorize(Roles = "MANAGER")] // فقط المدراء يقدرون ينفذون
-        public async Task<IActionResult> ApproveByManager(int leaveId)
+        [HttpPost("approve/{leaveId:int}")]
+        public async Task<IActionResult> Approve(int leaveId, [FromBody] DecisionDto dto)
         {
+            var managerIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(managerIdStr)) return Unauthorized();
+            var managerId = int.Parse(managerIdStr);
 
-            // جلب managerId من الـ Claims
-            var managerIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(managerIdString))
-                return Unauthorized("لم يتم العثور على معرف المدير!");
-            var managerId = int.Parse(managerIdString);
-
-            var response = await managerService.ApproveByManagerAsync(leaveId, managerId);
-            return Ok(response);
+            var res = await _byManager.ApproveByManagerAsync(leaveId, managerId, dto?.Reason);
+            return Ok(res);
         }
 
-        // رفض المدير المباشر
-        [HttpPost("{leaveId}/reject")]
-        [Authorize(Roles = "MANAGER")]
-        public async Task<IActionResult> RejectByManager(int leaveId)
+        [HttpPost("reject/{leaveId:int}")]
+        public async Task<IActionResult> Reject(int leaveId, [FromBody] DecisionDto dto)
         {
-            var managerIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(managerIdString))
-                return Unauthorized("لم يتم العثور على معرف المدير!");
-            var managerId = int.Parse(managerIdString);
+            if (string.IsNullOrWhiteSpace(dto?.Reason))
+                return BadRequest(new { message = "Reason is required to reject" });
 
-            var response = await managerService.RejectByManagerAsync(leaveId, managerId);
-            return Ok(response);
-        }
+            var managerIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(managerIdStr)) return Unauthorized();
+            var managerId = int.Parse(managerIdStr);
 
-        // جلب طلبات الإجازة للمدير
-        // GET api/manager/pending
-        [Authorize(Roles = "MANAGER")]
-        [HttpGet("pending")]
-        public async Task<IActionResult> GetRequestsForManagerAsync()
-        {
-            // 1) جلب Id المدير من الكليمات
-            var managerIdString = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
-                .Value;
-            if (!int.TryParse(managerIdString, out var managerId))
-                return Unauthorized("لم يتم العثور على معرف المدير!");
-
-            // 2) استدعاء السيرفس
-            var result = await managerService.GetPendingByManagerIdAsync(managerId);
-            return Ok(result);
-        }
-
-
-        [Authorize(Roles = "MANAGER")]
-        [HttpGet("approved")]
-        public async Task<IActionResult> getManagerApprovedRequests()
-        {
-            var managerIdString = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
-                .Value;
-            if (!int.TryParse(managerIdString, out var managerId))
-                return Unauthorized("لم يتم العثور على معرف المدير!");
-
-            var result = await managerService.GetAllRequests_approvedForManagerAsync(managerId);
-            return Ok(result);
+            var res = await _byManager.RejectByManagerAsync(leaveId, managerId, dto.Reason!);
+            return Ok(res);
         }
     }
 }
