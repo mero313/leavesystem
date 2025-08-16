@@ -30,5 +30,15 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }
+
+        public async Task<List<User>> GetByManagerIdAsync(int managerId)
+        {
+            return await _db.Users.Where(u => u.ManagerId == managerId).ToListAsync();
+        }
+
+        public async Task<List<User>> GetByDepartmentIdAsync(int departmentId)
+        => await _db.Users
+                .Where(u => u.DepartmentId == departmentId)
+                .ToListAsync();
     }
 }

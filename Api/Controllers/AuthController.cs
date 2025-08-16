@@ -28,6 +28,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(new { success = false, errors = ModelState });
+            
         var response = await authRepository.Login(dto);
         return Ok(response); // يطلع الـ token والمعلومات كلها بشكل صحيح
     }

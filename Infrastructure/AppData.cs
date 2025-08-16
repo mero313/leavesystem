@@ -106,20 +106,6 @@ namespace LeaveRequestSystem.Infrastructure.Data
     });
 
 
-            // User ↔ Manager
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Manager)
-                .WithMany(m => m.Subordinates)
-                .HasForeignKey(u => u.ManagerId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // User ↔ Department
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Department)
-                .WithMany(d => d.Users)
-                .HasForeignKey(u => u.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             // LeaveSettings ↔ Department
             modelBuilder.Entity<LeaveSettings>(b =>
             {
@@ -133,6 +119,30 @@ namespace LeaveRequestSystem.Infrastructure.Data
                 // كل قسم + نوع إجازة = إعداد واحد فقط
                 b.HasIndex(s => new { s.DepartmentId, s.LeaveType }).IsUnique();
             });
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Username)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Name)
+                .IsRequired();
+
+                modelBuilder.Entity<User>()
+                .Property(u => u.PasswordHash)
+                .IsRequired();
+                
+
+
+         
 
         }
     }

@@ -74,7 +74,7 @@ namespace LeaveRequestSystem.Application.Mappers
             {
                 Username = dto.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role,
+                Role = Role.EMPLOYEE,
                 Name = dto.Name,
                 Email = dto.Email,
                 IsActive = true,

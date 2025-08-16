@@ -11,8 +11,8 @@ namespace LeaveRequestSystem.Domain.Repositories
     Task<List<User>> GetUsers();
     Task UpdateAsync(User user); // ✅ ضرورية
     // (اختياري) تسهيلات:
-    // Task<List<User>> GetByManagerIdAsync(int managerId);
-    // Task<List<User>> GetByDepartmentAsync(string department);
+     Task<List<User>> GetByManagerIdAsync(int managerId);
+     Task<List<User>> GetByDepartmentIdAsync(int departmentid);
 }
 
 }

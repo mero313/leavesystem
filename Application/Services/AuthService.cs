@@ -48,7 +48,7 @@ namespace LeaveRequestSystem.Application.Services
                 new Claim("Email", user.Email ?? string.Empty),
                 new Claim("IsActive", user.IsActive.ToString()),
                 new Claim("ManagerId", user.ManagerId?.ToString() ?? string.Empty)
-                
+
             };
             if (user.DepartmentId.HasValue)
                 claims.Add(new Claim("DepartmentId", user.DepartmentId.Value.ToString()));
@@ -86,17 +86,21 @@ namespace LeaveRequestSystem.Application.Services
             if (existingUser != null)
             {
                 throw new Exception("Username already exists");
-
+            }
+            var existingEmail = await UserRepository.GetByUsernameAsync(dto.Email);
+            if (existingEmail != null)
+            {
+                throw new Exception("Email already exists");
             }
 
-            var email = dto.Email?.ToUpper() ?? "";
+            // var email = dto.Email?.ToUpper() ?? "";
 
-            if (email.EndsWith("@MANAGER"))
-                dto.Role = Role.MANAGER;
-            else if (email.EndsWith("@HR"))
-                dto.Role = Role.HR;
-            else
-                dto.Role = Role.EMPLOYEE;
+            // if (email.EndsWith("@MANAGER"))
+            //     dto.Role = Role.MANAGER;
+            // else if (email.EndsWith("@HR"))
+            //     dto.Role = Role.HR;
+            // else
+            //     dto.Role = Role.EMPLOYEE;
 
             var user = AuthMapper.ToUserEntity(dto);
             await UserRepository.AddAsync(user);
