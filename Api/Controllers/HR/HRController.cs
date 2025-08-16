@@ -46,9 +46,9 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
         [HttpPost("assign-manager")]
-        public async Task<IActionResult> AssignManager([FromBody] AssignManagerDto dto)
+        public async Task<IActionResult> AssignManager([FromBody] AssignManagerDto dto, CancellationToken ct)
         {
-            
+
             await _userService.AssignManagerAsync(dto.UserId, dto.DepartmentId, dto.PromoteToManager);
             return Ok(new { message = "Updated" });
         }
@@ -58,6 +58,17 @@ namespace LeaveRequestSystem.Api.Controllers
         {
             await _userService.ToggleActiveAsync(dto.UserId, dto.IsActive);
             return Ok(new { message = "Updated" });
+        }
+
+        [HttpGet("user-managment")]
+        public async Task< IActionResult>   UserManagement()
+        {
+           var allusers = await _userService.GetallUsersAsync();
+            return Ok(new
+            {
+                message = "seccses",
+                count = allusers.Count(),
+                users =allusers });
         }
     }
 }

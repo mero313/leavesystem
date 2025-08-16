@@ -11,7 +11,7 @@ namespace LeaveRequestSystem.Infrastructure.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
-        public DbSet<LeaveRequestHistory> LeaveRequestHistories { get; set; }
+        public DbSet<LeaveRequestHistory> LeaveRequestHistory { get; set; }
         public DbSet<LeaveSettings> LeaveSettings { get; set; }   // انتبه: اسم الكلاس عندك "LeaveSettings" أو "LeaveRequestSetting"؟ خليه نفس اسم الكلاس بالضبط
         public DbSet<Department> Departments { get; set; }
 

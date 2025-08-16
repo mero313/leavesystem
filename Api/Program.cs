@@ -65,12 +65,13 @@ builder.Services.AddSwaggerGen(c =>
 // ========== DI REGISTER (واجهات ← تطبيقات) ==========
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
-
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LeaveRequestService>();
 builder.Services.AddScoped<ByManagerService>();
 builder.Services.AddScoped<HRService>();
 builder.Services.AddScoped<UserService>();
+
 
 builder.Services.AddCors(o =>
 {

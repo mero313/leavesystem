@@ -7,7 +7,8 @@ namespace LeaveRequestSystem.Domain.Repositories
 {
     Task<User?> GetByUsernameAsync(string username);
     Task AddAsync(User user);
-    Task<User?> GetByIdAsync(int id);
+    Task<User?> GetByIdAsync(int id );
+    // 
     Task<List<User>> GetUsers();
     Task UpdateAsync(User user); // ✅ ضرورية
     // (اختياري) تسهيلات:
