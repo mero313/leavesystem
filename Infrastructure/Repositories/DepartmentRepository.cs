@@ -15,9 +15,9 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<Department?> GetDepartmentByIdAsync(int DepId)
+        public async Task<Department?> GetDepartmentByIdAsync(int DepId, CancellationToken ct = default)
         {
-            return await _db.Departments.FindAsync(DepId);
+            return await _db.Departments.FindAsync(DepId, ct);
 
         }
 
@@ -25,16 +25,16 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
       => await _db.Departments.AnyAsync(d => d.Id == depId);
 
 
-        public async Task AddAsync(Department department)
+        public async Task AddAsync(Department department, CancellationToken ct = default)
         {
             _db.Departments.Add(department);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
 
-        public async Task UpdateAsync(Department department)
+        public async Task UpdateAsync(Department department, CancellationToken ct = default)
         {
             _db.Departments.Update(department);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
         public async Task RemoveAsync(int id)
         {
@@ -44,10 +44,14 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<List<Department>> ListAsync()
+        public async Task<List<Department>> ListAsync(CancellationToken ct = default)
             => await _db.Departments
                         .AsNoTracking()
                         .OrderBy(d => d.Name)
-                        .ToListAsync();
+                        .ToListAsync(ct);
+
+        public Task<Department?> GetByManagerIdAsync(int managerUserId, CancellationToken ct = default)
+            => _db.Departments.AsNoTracking()
+            .FirstOrDefaultAsync(d => d.ManagerId == managerUserId, ct);
     }
 }

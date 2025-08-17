@@ -87,7 +87,13 @@ namespace LeaveRequestSystem.Application.Services
             {
                 throw new Exception("Username already exists");
             }
-            var existingEmail = await UserRepository.GetByUsernameAsync(dto.Email);
+
+            var email = dto.Email?.Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email is required");
+
+
+            var existingEmail = await UserRepository.GetByEmailAsync(email);
             if (existingEmail != null)
             {
                 throw new Exception("Email already exists");

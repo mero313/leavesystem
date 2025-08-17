@@ -71,7 +71,9 @@ builder.Services.AddScoped<LeaveRequestService>();
 builder.Services.AddScoped<ByManagerService>();
 builder.Services.AddScoped<HRService>();
 builder.Services.AddScoped<UserService>();
-
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<DepartmentService>(); // ✅ الأفضل
 
 builder.Services.AddCors(o =>
 {

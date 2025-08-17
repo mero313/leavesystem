@@ -17,10 +17,10 @@ namespace LeaveRequestSystem.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId, string? reason)
+        public async Task<LeaveRequestResponseDto> ApproveByManagerAsync(int leaveId, int managerId, string? reason ,  CancellationToken ct = default)
         {
             var leave = await _leaveRepository.GetByIdAsync(leaveId) ?? throw new Exception("Request not found");
-            var employee = await _userRepository.GetByIdAsync(leave.UserId) ?? throw new Exception("Employee not found");
+            var employee = await _userRepository.GetUserByIdAsync(leave.UserId ,ct) ?? throw new Exception("Employee not found");
 
             if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
             if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");
@@ -34,10 +34,10 @@ namespace LeaveRequestSystem.Application.Services
             return LeaveRequestMapper.ToResponseDto(leave);
         }
 
-        public async Task<LeaveRequestResponseDto> RejectByManagerAsync(int leaveId, int managerId, string reason)
+        public async Task<LeaveRequestResponseDto> RejectByManagerAsync(int leaveId, int managerId, string reason ,  CancellationToken ct = default)
         {
             var leave = await _leaveRepository.GetByIdAsync(leaveId) ?? throw new Exception("Request not found");
-            var employee = await _userRepository.GetByIdAsync(leave.UserId) ?? throw new Exception("Employee not found");
+            var employee = await _userRepository.GetUserByIdAsync(leave.UserId , ct) ?? throw new Exception("Employee not found");
 
             if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
             if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");

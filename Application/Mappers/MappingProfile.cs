@@ -81,5 +81,48 @@ namespace LeaveRequestSystem.Application.Mappers
                 CreatedAt = DateTime.UtcNow
             };
         }
+
+
+    }
+    public static class DepartmentMapper
+    {
+        public static Department ToDepartmentEntity(DepartmentRequestDto dto)
+        {
+            return new Department
+            {
+
+                Name = dto.Name,
+                ManagerId = dto.ManagerUserId
+
+
+            };
+        }
+
+        // public static DepartmentWithStatsDto ToResponseDto(Department department, int usersCount, List<string>? userNames = null)
+        // {
+        //     return new DepartmentWithStatsDto
+        //     {
+        //         Id = department.Id,
+        //         Name = department.Name,
+        //         ManagerName = department.ManagerName,
+        //         UsersCount = usersCount,
+        //         UserNames = userNames
+
+        //     };
+        // }
+
+        public static DepartmentWithStatsDto ToResponseDto(Department department)
+        {
+            return new DepartmentWithStatsDto
+            {
+                Id = department.Id,
+                Name = department.Name,
+                ManagerName = department.ManagerName,
+                ManagerId = department.ManagerId
+
+            };
+        }
     }
 }
+
+

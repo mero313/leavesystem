@@ -16,9 +16,9 @@ namespace LeaveRequestSystem.Application.Services
             this._departments = departments;
         }
 
-        public async Task AssignManagerAsync(int userId, int? departmentId, bool promoteToManager)
+        public async Task AssignManagerAsync(int userId, int? departmentId, bool promoteToManager , CancellationToken ct = default)
         {
-            var user = await _users.GetByIdAsync(userId) ?? throw new KeyNotFoundException("User not found");
+            var user = await _users.GetUserByIdAsync(userId , ct) ?? throw new KeyNotFoundException("User not found");
 
             if (departmentId is int depId)
             {
@@ -32,22 +32,34 @@ namespace LeaveRequestSystem.Application.Services
             if (promoteToManager) user.Role = Role.MANAGER;
             else if (user.Role == Role.MANAGER) user.Role = Role.EMPLOYEE;
 
-            await _users.UpdateAsync(user);
+            await _users.UpdateAsync(user , ct);
         }
 
         public async Task ToggleActiveAsync(int userId, bool isActive, CancellationToken ct = default)
         {
-            var user = await _users.GetByIdAsync(userId) ?? throw new Exception("User not found");
+            var user = await _users.GetUserByIdAsync(userId, ct) ?? throw new Exception("User not found");
+
+            // 2. شيّك إذا حالته هي نفسها اللي نريد نغيرها
+            if (user.IsActive == isActive)
+            {
+                throw new Exception(isActive
+                    ? "User is already active"
+                    : "User is already inactive");
+            }
+
+            // 3. حدّث الحالة
             user.IsActive = isActive;
-            await _users.UpdateAsync(user);
+            await _users.UpdateAsync(user,ct);
         }
 
         public async Task<List<UserDto>> GetallUsersAsync()
         {
             var users = await _users.GetUsers(); // يرجّع Entities من الريبو
+            if (users == null)
+                throw new Exception("Users not found");
 
             // نحول الـ Entity إلى DTO
-            var dtos = users.Select(u => new UserDto
+                var dtos = users.Select(u => new UserDto
             {
                 Id = u.Id,
                 Username = u.Username,
@@ -59,7 +71,6 @@ namespace LeaveRequestSystem.Application.Services
             }).ToList();
 
             return dtos; // هنا لازم ترجع قيمة
-
 
         }
 

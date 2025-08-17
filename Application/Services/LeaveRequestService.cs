@@ -19,10 +19,10 @@ namespace LeaveRequestSystem.Application.Services
 
         }
 
-        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId)
+        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId ,  CancellationToken ct = default)
         {
             // 1) التحقق من المستخدم
-            var user = await _userRepository.GetByIdAsync(userId)
+            var user = await _userRepository.GetUserByIdAsync(userId ,ct)
                        ?? throw new UnauthorizedAccessException("User not authenticated");
 
             // 2) التحقق من التواريخ
@@ -38,7 +38,7 @@ namespace LeaveRequestSystem.Application.Services
                 throw new InvalidOperationException("الموظف غير مرتبط بأي مدير، يرجى ربط الحساب بمدير.");
 
             // 4) التحقق من وجود المدير وصحته
-            var manager = await _userRepository.GetByIdAsync(user.ManagerId.Value);
+            var manager = await _userRepository.GetUserByIdAsync(user.ManagerId.Value , ct);
             if (manager == null || manager.Role != Role.MANAGER || !manager.IsActive)
                 throw new InvalidOperationException("مدير غير صالح أو غير موجود.");
 

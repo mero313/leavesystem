@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Services;
 using System.Security.Claims;
+using LeaveRequestSystem.Domain.Entities;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
@@ -13,11 +14,13 @@ namespace LeaveRequestSystem.Api.Controllers
     {
         private readonly HRService _hrService;
         private readonly UserService _userService;
+        private readonly DepartmentService _departmentService;
 
-        public HRController(HRService hrService, UserService userService)
+        public HRController(HRService hrService, UserService userService, DepartmentService departmentService)
         {
             _hrService = hrService;
             _userService = userService;
+            _departmentService = departmentService;
         }
 
         [HttpPost("approve/{leaveId:int}")]
@@ -61,14 +64,34 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
         [HttpGet("user-managment")]
-        public async Task< IActionResult>   UserManagement()
+        public async Task<IActionResult> UserManagement()
         {
-           var allusers = await _userService.GetallUsersAsync();
+            var allusers = await _userService.GetallUsersAsync();
             return Ok(new
             {
                 message = "seccses",
                 count = allusers.Count(),
-                users =allusers });
+                users = allusers
+            });
+        }
+
+        [HttpPost("departments")]
+        public async Task<IActionResult> AddDepartment([FromBody] DepartmentRequestDto dto , CancellationToken ct )
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            var result = await _departmentService.AddDep(dto , ct);
+            return Ok(result);
+        }
+
+
+        [HttpGet("departments/{id:int}")]
+        public async Task<IActionResult> GetDepartmentById(int id)
+        {
+            var dep = await _departmentService.GetDepByIdAsync(id);
+            return Ok(dep);
         }
     }
 }

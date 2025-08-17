@@ -136,13 +136,15 @@ namespace LeaveRequestSystem.Infrastructure.Data
                 .Property(u => u.Name)
                 .IsRequired();
 
-                modelBuilder.Entity<User>()
-                .Property(u => u.PasswordHash)
-                .IsRequired();
-                
+            modelBuilder.Entity<User>()
+            .Property(u => u.PasswordHash)
+            .IsRequired();
 
 
-         
+
+            modelBuilder.Entity<Department>()
+       .HasIndex(d => d.ManagerId)
+       .IsUnique(); // يسمح بعدة NULLs، لكن يمنع تكرار نفس الـ Id
 
         }
     }
