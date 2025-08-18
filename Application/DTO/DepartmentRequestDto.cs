@@ -9,6 +9,7 @@ namespace LeaveRequestSystem.Application.DTOs
 
         // optional: if provided, we'll promote this user as the manager
         public int? ManagerUserId { get; set; }
+         
 
         // if you still want to accept/display the name you can keep it,
         // but it will be overridden by the selected user’s Name.

@@ -3,6 +3,7 @@ using System;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    partial class AppDataModelSnapshot : ModelSnapshot
+    [Migration("20250818071709_update123sd2ثي2ddsd")]
+    partial class update123sd2ثي2ddsd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -26,6 +29,9 @@ namespace LeaveRequestSystem.Migrations
                     b.Property<int?>("ManagerId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ManagerId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -34,6 +40,8 @@ namespace LeaveRequestSystem.Migrations
 
                     b.HasIndex("ManagerId")
                         .IsUnique();
+
+                    b.HasIndex("ManagerId1");
 
                     b.ToTable("Departments");
                 });
@@ -228,10 +236,14 @@ namespace LeaveRequestSystem.Migrations
 
             modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.Department", b =>
                 {
-                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", "Manager")
-                        .WithOne("ManagedDepartment")
-                        .HasForeignKey("LeaveRequestSystem.Domain.Entities.Department", "ManagerId")
+                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", "Manager")
+                        .WithMany("ManagedDepartments")
+                        .HasForeignKey("ManagerId1");
 
                     b.Navigation("Manager");
                 });
@@ -330,7 +342,7 @@ namespace LeaveRequestSystem.Migrations
 
                     b.Navigation("LeaveRequests");
 
-                    b.Navigation("ManagedDepartment");
+                    b.Navigation("ManagedDepartments");
 
                     b.Navigation("Subordinates");
                 });

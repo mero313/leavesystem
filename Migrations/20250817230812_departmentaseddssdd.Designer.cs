@@ -3,6 +3,7 @@ using System;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    partial class AppDataModelSnapshot : ModelSnapshot
+    [Migration("20250817230812_departmentaseddssdd")]
+    partial class departmentaseddssdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -25,6 +28,9 @@ namespace LeaveRequestSystem.Migrations
 
                     b.Property<int?>("ManagerId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("ManagerName")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -123,16 +129,11 @@ namespace LeaveRequestSystem.Migrations
                     b.Property<int>("ToStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ActionByUserId");
 
                     b.HasIndex("LeaveRequestId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("LeaveRequestHistory");
                 });
@@ -185,7 +186,6 @@ namespace LeaveRequestSystem.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
@@ -226,16 +226,6 @@ namespace LeaveRequestSystem.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.Department", b =>
-                {
-                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", "Manager")
-                        .WithOne("ManagedDepartment")
-                        .HasForeignKey("LeaveRequestSystem.Domain.Entities.Department", "ManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Manager");
-                });
-
             modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.LeaveRequest", b =>
                 {
                     b.HasOne("LeaveRequestSystem.Domain.Entities.User", "ApprovedByHR")
@@ -251,7 +241,7 @@ namespace LeaveRequestSystem.Migrations
                     b.HasOne("LeaveRequestSystem.Domain.Entities.User", "User")
                         .WithMany("LeaveRequests")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApprovedByHR");
@@ -274,10 +264,6 @@ namespace LeaveRequestSystem.Migrations
                         .HasForeignKey("LeaveRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("LeaveRequestSystem.Domain.Entities.User", null)
-                        .WithMany("ActionHistory")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("ActionByUser");
 
@@ -326,11 +312,7 @@ namespace LeaveRequestSystem.Migrations
 
             modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.User", b =>
                 {
-                    b.Navigation("ActionHistory");
-
                     b.Navigation("LeaveRequests");
-
-                    b.Navigation("ManagedDepartment");
 
                     b.Navigation("Subordinates");
                 });

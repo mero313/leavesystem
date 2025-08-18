@@ -33,7 +33,7 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task UpdateAsync(User user, CancellationToken ct = default)
         {
             _db.Users.Update(user);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
 
         public async Task<List<User>> GetByManagerIdAsync(int managerId)
@@ -67,5 +67,21 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
                   .Select(u => u.Name)
                   .AsNoTracking()
                   .ToListAsync(ct);
+
+
+
+        public async Task<List<User>> ListByManagerIdAsync(int managerId, CancellationToken ct = default)
+        {
+            return await _db.Users
+                .Where(u => u.ManagerId == managerId)
+                .ToListAsync(ct);
+        }
+
+
+        public async Task UpdateRangeAsync(IEnumerable<User> users, CancellationToken ct = default)
+        {
+            _db.Users.UpdateRange(users);
+            await _db.SaveChangesAsync(ct);
+        }
     }
 }

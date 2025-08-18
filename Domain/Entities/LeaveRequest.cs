@@ -36,7 +36,7 @@ namespace LeaveRequestSystem.Domain.Entities
         public DateTime? HRApprovalDate { get; set; }
         public string? HRComments { get; set; }
 
-        
+         
          public ICollection<LeaveRequestHistory> LeaveRequestHistory  { get; set; } = new List<LeaveRequestHistory>();
     }
 }

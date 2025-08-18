@@ -50,8 +50,18 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
                         .OrderBy(d => d.Name)
                         .ToListAsync(ct);
 
-        public Task<Department?> GetByManagerIdAsync(int managerUserId, CancellationToken ct = default)
-            => _db.Departments.AsNoTracking()
-            .FirstOrDefaultAsync(d => d.ManagerId == managerUserId, ct);
+       public async Task<Department?> GetByManagerIdAsync(int managerUserId, CancellationToken ct = default)
+        {
+            return await _db.Departments
+                .Include(d => d.Manager)
+                .FirstOrDefaultAsync(d => d.ManagerId == managerUserId, ct);
+        }
+
+
+        public Task<Department?> GetDepByNameAsync(string DepName, CancellationToken ct = default)
+        =>
+            _db.Departments.AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Name == DepName, ct);
+         
     }
 }

@@ -117,8 +117,8 @@ namespace LeaveRequestSystem.Application.Mappers
             {
                 Id = department.Id,
                 Name = department.Name,
-                ManagerName = department.ManagerName,
                 ManagerId = department.ManagerId
+                
 
             };
         }

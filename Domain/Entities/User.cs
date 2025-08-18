@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using LeaveRequestSystem.Domain.Enums;
+using LeaveRequestSystem.Migrations;
 
 namespace LeaveRequestSystem.Domain.Entities
 {
@@ -19,6 +20,7 @@ namespace LeaveRequestSystem.Domain.Entities
         public string Name { get; set; } = null!;
 
         [EmailAddress]
+        [Required]
         public string? Email { get; set; }
 
         // ✅ هوية القسم الرقمية (اختياريّة)
@@ -39,5 +41,9 @@ namespace LeaveRequestSystem.Domain.Entities
 
         // علاقات الإجازات
         public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
+        public ICollection<LeaveRequestHistory> ActionHistory { get; set; } = new List<LeaveRequestHistory>();
+        public Department? ManagedDepartment { get; set; }
+
+        
     }
 }

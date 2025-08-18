@@ -16,23 +16,49 @@ namespace LeaveRequestSystem.Application.Services
             this._departments = departments;
         }
 
-        public async Task AssignManagerAsync(int userId, int? departmentId, bool promoteToManager , CancellationToken ct = default)
+        public async Task Promotion2Manager(int userId, CancellationToken ct = default)
         {
-            var user = await _users.GetUserByIdAsync(userId , ct) ?? throw new KeyNotFoundException("User not found");
+            var user = await _users.GetUserByIdAsync(userId, ct) ?? throw new KeyNotFoundException("User not found");
 
-            if (departmentId is int depId)
+            if (user.Role == Role.MANAGER) throw new InvalidOperationException("User is already a manager");
+
+
+            user.Role = Role.MANAGER;
+
+            await _users.UpdateAsync(user, ct);
+        }
+
+        public async Task Demote2Employee(int userId, bool removeFromDepartment, CancellationToken ct = default)
+        {
+            var user = await _users.GetUserByIdAsync(userId, ct) ?? throw new KeyNotFoundException("User not found");
+
+            if (user.Role == Role.EMPLOYEE) throw new InvalidOperationException("User is already a employee");
+            // 1) إذا هو مدير قسم: فك ربط القسم من هذا المدير
+            var dep = await _departments.GetByManagerIdAsync(user.Id, ct);
+            if (dep is not null)
             {
-                if (!await _departments.DepartmentExistsAsync(depId))
-                    throw new KeyNotFoundException("Department not found");
-
-
-                user.DepartmentId = depId; // تعيين الـ FK مباشرة
+                dep.ManagerId = null;
+                await _departments.UpdateAsync(dep, ct);
             }
 
-            if (promoteToManager) user.Role = Role.MANAGER;
-            else if (user.Role == Role.MANAGER) user.Role = Role.EMPLOYEE;
+            // 2) فك المرؤوسين عنه (إذا عندك هالدالة)
+            var subs = await _users.ListByManagerIdAsync(user.Id, ct); // يرجع List<User>
+            if (subs.Count > 0)
+            {
+                foreach (var s in subs)
+                    s.ManagerId = null;
 
-            await _users.UpdateAsync(user , ct);
+                await _users.UpdateRangeAsync(subs, ct);
+            }
+
+            // 3) نزّل الدور و نظّف ارتباطاته
+            user.Role = Role.EMPLOYEE;
+            user.ManagerId = null;
+
+            if (removeFromDepartment)
+                user.DepartmentId = null; // إذا تريد يرجع “بلا قسم”
+
+            await _users.UpdateAsync(user, ct);
         }
 
         public async Task ToggleActiveAsync(int userId, bool isActive, CancellationToken ct = default)
@@ -49,7 +75,7 @@ namespace LeaveRequestSystem.Application.Services
 
             // 3. حدّث الحالة
             user.IsActive = isActive;
-            await _users.UpdateAsync(user,ct);
+            await _users.UpdateAsync(user, ct);
         }
 
         public async Task<List<UserDto>> GetallUsersAsync()
@@ -59,7 +85,7 @@ namespace LeaveRequestSystem.Application.Services
                 throw new Exception("Users not found");
 
             // نحول الـ Entity إلى DTO
-                var dtos = users.Select(u => new UserDto
+            var dtos = users.Select(u => new UserDto
             {
                 Id = u.Id,
                 Username = u.Username,

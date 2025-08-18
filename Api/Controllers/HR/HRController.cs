@@ -4,6 +4,7 @@ using LeaveRequestSystem.Application.DTOs;
 using LeaveRequestSystem.Application.Services;
 using System.Security.Claims;
 using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Migrations;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
@@ -47,12 +48,28 @@ namespace LeaveRequestSystem.Api.Controllers
             var res = await _hrService.RejectByHRAsync(leaveId, hrId, dto.Reason!);
             return Ok(res);
         }
+        [HttpPost("{departmentId:int}/assign-manager")]
+        public async Task<IActionResult> AssignManager(int departmentId,  int manageruserid, CancellationToken ct)
+        {
+            var result = await _departmentService.AssignManagerAsync(departmentId, manageruserid, ct);
+            return Ok(result);
+        }
 
-        [HttpPost("assign-manager")]
-        public async Task<IActionResult> AssignManager([FromBody] AssignManagerDto dto, CancellationToken ct)
+
+
+        [HttpPost("to-manager")]
+        public async Task<IActionResult> Manager([FromBody] PromotionManagerDto dto, CancellationToken ct)
         {
 
-            await _userService.AssignManagerAsync(dto.UserId, dto.DepartmentId, dto.PromoteToManager);
+            await _userService.Promotion2Manager(dto.UserId, ct);
+            return Ok(new { message = "Updated" });
+        }
+
+        [HttpPost("to-employee")]
+        public async Task<IActionResult> Employee([FromBody] PromotionManagerDto  dto, bool removeFromDepartment, CancellationToken ct)
+        {
+
+            await _userService.Demote2Employee(dto.UserId, removeFromDepartment, ct);
             return Ok(new { message = "Updated" });
         }
 
@@ -62,6 +79,8 @@ namespace LeaveRequestSystem.Api.Controllers
             await _userService.ToggleActiveAsync(dto.UserId, dto.IsActive);
             return Ok(new { message = "Updated" });
         }
+
+
 
         [HttpGet("user-managment")]
         public async Task<IActionResult> UserManagement()
@@ -76,13 +95,13 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
         [HttpPost("departments")]
-        public async Task<IActionResult> AddDepartment([FromBody] DepartmentRequestDto dto , CancellationToken ct )
+        public async Task<IActionResult> AddDepartment([FromBody] DepartmentRequestDto dto, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
 
-            var result = await _departmentService.AddDep(dto , ct);
+            var result = await _departmentService.CreateAsync(dto, ct);
             return Ok(result);
         }
 
@@ -92,6 +111,51 @@ namespace LeaveRequestSystem.Api.Controllers
         {
             var dep = await _departmentService.GetDepByIdAsync(id);
             return Ok(dep);
+        }
+
+        [HttpGet("department-stats")]
+        public async Task<IActionResult> GetDepartmentStats(int id, bool users, CancellationToken ct)
+        {
+            var stats = await _departmentService.GetDepartmentWithStatsAsync(id, users, ct);
+            return Ok(stats);
+        }
+
+        [HttpGet("department-list")]
+        public async Task<List<DepartmentWithStatsDto>> ListDepartmentsWithCount(CancellationToken ct)
+        {
+            var departments = await _departmentService.ListDepartmentsWithCountsAsync(ct);
+            return departments;
+        }
+
+
+        // add employee to dep
+        [HttpPost("{departmentId:int}/employees")]
+        public async Task<IActionResult> AddEmployee(bool moveIfInAnotherDept,
+            int departmentId,
+            [FromBody] AddEmployeeToDepartmentDto dto,
+            CancellationToken ct)
+        {
+            await _departmentService.AddEmployeeAsync(departmentId, dto.UserId, moveIfInAnotherDept, ct);
+            return Ok(new { success = true });
+        }
+
+        // إضافة مجموعة موظفين
+        [HttpPost("{departmentId:int}/employees/bulk")]
+        public async Task<IActionResult> AddEmployeesBulk(
+            int departmentId,
+            [FromBody] AddEmployeesToDepartmentDto dto,
+            CancellationToken ct)
+        {
+            await _departmentService.AddEmployeesAsync(departmentId, dto, ct);
+            return Ok(new { success = true, added = dto.UserIds.Distinct().Count() });
+        }
+
+        // (اختياري) إزالة موظف من القسم
+        [HttpDelete("{departmentId:int}/employees/{userId:int}")]
+        public async Task<IActionResult> RemoveEmployee(int departmentId, int userId, CancellationToken ct)
+        {
+            await _departmentService.RemoveEmployeeAsync(departmentId, userId, ct);
+            return Ok(new { success = true });
         }
     }
 }
