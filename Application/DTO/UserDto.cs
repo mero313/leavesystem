@@ -17,5 +17,6 @@ namespace LeaveRequestSystem.Application.DTOs
         public string ManagerName { get; set; } = string.Empty;
         public Role Role { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

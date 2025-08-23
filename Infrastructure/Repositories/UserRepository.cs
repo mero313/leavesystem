@@ -21,8 +21,14 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<User?> GetUserByIdAsync(int id, CancellationToken ct = default)
             => await _db.Users.FindAsync(id);
 
-        public async Task<List<User>> GetUsers()
-            => await _db.Users.OrderByDescending(u => u.Id).ToListAsync();
+        public async Task<List<User>> GetUsers(CancellationToken ct = default)
+            => await _db.Users
+        .Include(u => u.Department)   // ✅ حتى يجي DepartmentName
+        .Include(u => u.Manager)      // ✅ حتى يجي ManagerName (إذا تحتاجه)
+        .AsNoTracking()               // قراءة فقط
+        .OrderByDescending(u => u.Id)
+        .ToListAsync(ct);
+
 
         public async Task AddAsync(User user)
         {
@@ -83,5 +89,78 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
             _db.Users.UpdateRange(users);
             await _db.SaveChangesAsync(ct);
         }
+
+
+        public async Task<PagedResult<UserDto>> GetUsersPagedDtoAsync(UserQuery q, CancellationToken ct = default)
+        {
+            IQueryable<User> baseQuery = _db.Users
+                                        .AsNoTracking();
+
+
+            // Filters
+            if (q.DepartmentId is int depId) baseQuery = baseQuery.Where(u => u.DepartmentId == depId);
+            if (q.ManagerId is int manId) baseQuery = baseQuery.Where(u => u.ManagerId == manId);
+            if (q.IsActive is bool act) baseQuery = baseQuery.Where(u => u.IsActive == act);
+            if (q.Role is Role role) baseQuery = baseQuery.Where(u => u.Role == role);
+
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(q.Search))
+            {
+                var t = q.Search.ToLower();
+                baseQuery = baseQuery.Where(u =>
+                    u.Username.ToLower().Contains(t) ||
+                    u.Name.ToLower().Contains(t) ||
+                    (u.Email != null && u.Email.ToLower().Contains(t)) ||
+                    (u.Department != null && u.Department.Name.ToLower().Contains(t)));
+            }
+
+            // Total before paging
+            var total = await baseQuery.CountAsync(ct);
+
+            // Sorting
+            baseQuery = (q.SortBy?.ToLowerInvariant()) switch
+            {
+                "name" => (q.Desc ? baseQuery.OrderByDescending(u => u.Name) : baseQuery.OrderBy(u => u.Name)),
+                "username" => (q.Desc ? baseQuery.OrderByDescending(u => u.Username) : baseQuery.OrderBy(u => u.Username)),
+                "createdat" => (q.Desc ? baseQuery.OrderByDescending(u => u.CreatedAt) : baseQuery.OrderBy(u => u.CreatedAt)),
+                // department / manager sorting رح نسويه بعد الـ Select (أقل مثالية SQLيًا، لكن بسيط)
+                "department" => baseQuery.OrderBy(u => u.Id), // placeholder؛ راح نرتب بعد الـ Select
+                "manager" => baseQuery.OrderBy(u => u.Id), // placeholder
+                _ => (q.Desc ? baseQuery.OrderByDescending(u => u.Id) : baseQuery.OrderBy(u => u.Id)),
+            };
+
+            // Paging
+            var pageSize = Math.Clamp(q.PageSize, 1, 100);
+            var page = Math.Max(q.Page, 1);
+
+
+
+            var projected = baseQuery
+                  .Select(u => new UserDto
+                  {
+                      Id = u.Id,
+                      Username = u.Username,
+                      Name = u.Name,
+                      Email = u.Email ?? "",
+                      DepartmentId = u.DepartmentId,
+                      DepartmentName = u.Department != null ? u.Department.Name : "", // EF يحولها LEFT JOIN
+                      ManagerId = u.ManagerId,
+                      ManagerName = u.Manager != null ? u.Manager.Name : "",
+                      Role = u.Role,
+                      IsActive = u.IsActive,
+                      CreatedAt = u.CreatedAt,
+                  });
+
+
+
+            var items = await projected
+           .Skip((page - 1) * pageSize)
+           .Take(pageSize)
+           .ToListAsync(ct);
+
+            return new PagedResult<UserDto>(items, total, page, pageSize);
+        }
+
     }
 }

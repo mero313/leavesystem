@@ -123,6 +123,29 @@ namespace LeaveRequestSystem.Infrastructure.Data
             modelBuilder.Entity<Department>()
                 .HasIndex(d => d.ManagerId)
                 .IsUnique();
+
+
+
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.DepartmentId);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.ManagerId);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.IsActive);
+
+            // إذا تسوي بحث على Name بكثرة:
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Name);
+
         }
 
     }

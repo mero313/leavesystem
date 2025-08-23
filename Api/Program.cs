@@ -7,6 +7,8 @@ using LeaveRequestSystem.Infrastructure.Data;
 using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Infrastructure.Repositories;
 using LeaveRequestSystem.Application.Services;
+using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,9 @@ builder.Services.AddAuthorization();
 // Swagger + زر Authorize
 builder.Services.AddSwaggerGen(c =>
 {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "LeaveRequestSystem", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

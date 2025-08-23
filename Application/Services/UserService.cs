@@ -2,6 +2,9 @@ using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Domain.Enums;
 using LeaveRequestSystem.Application.DTOs;
+using Microsoft.AspNetCore.Identity;
+using LeaveRequestSystem.Application.Mappers;
+
 
 namespace LeaveRequestSystem.Application.Services
 {
@@ -78,27 +81,22 @@ namespace LeaveRequestSystem.Application.Services
             await _users.UpdateAsync(user, ct);
         }
 
-        public async Task<List<UserDto>> GetallUsersAsync()
+        public async Task<List<UserDto>> GetallUsersAsync(CancellationToken ct = default)
         {
-            var users = await _users.GetUsers(); // يرجّع Entities من الريبو
-            if (users == null)
-                throw new Exception("Users not found");
+            var users = await _users.GetUsers(ct);   // List<User>
+            if (users == null || users.Count == 0) throw new KeyNotFoundException("No users found");
 
-            // نحول الـ Entity إلى DTO
-            var dtos = users.Select(u => new UserDto
-            {
-                Id = u.Id,
-                Username = u.Username,
-                Name = u.Name,
-                Email = u.Email ?? "",
-                DepartmentId = u.DepartmentId,
-                Role = u.Role,
-                IsActive = u.IsActive,
-            }).ToList();
 
-            return dtos; // هنا لازم ترجع قيمة
+            // خيار 1:
+            return UserMapper.UserResponseDto(users);
 
+            // أو خيار 2:
+            // return users.Select(UserMapper.ToDto).ToList();
         }
 
+
+       public Task<PagedResult<UserDto>> SearchUsersAsync(UserQuery q, CancellationToken ct = default)
+        => _users.GetUsersPagedDtoAsync(q, ct); // ✅ مباشرة بدون Mapper إضافي
+
+        }
     }
-}

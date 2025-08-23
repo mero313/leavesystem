@@ -23,7 +23,7 @@ namespace LeaveRequestSystem.Application.Services
             var employee = await _userRepository.GetUserByIdAsync(leave.UserId ,ct) ?? throw new Exception("Employee not found");
 
             if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
-            if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");
+            if (leave.Status == LeaveStatus.ManagerApproved) throw new InvalidOperationException(" Already approved by manager");
 
             leave.Status = LeaveStatus.ManagerApproved;
             leave.ApprovedByManagerId = managerId;
@@ -40,7 +40,8 @@ namespace LeaveRequestSystem.Application.Services
             var employee = await _userRepository.GetUserByIdAsync(leave.UserId , ct) ?? throw new Exception("Employee not found");
 
             if (employee.ManagerId != managerId) throw new UnauthorizedAccessException("Not your subordinate");
-            if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException("Invalid status");
+            if (leave.Status != LeaveStatus.Pending) throw new InvalidOperationException(" its status is not pending");
+            if (leave.Status == LeaveStatus.Rejected) throw new InvalidOperationException(" Already rejected by manager");
 
             leave.Status = LeaveStatus.Rejected;
             leave.ApprovedByManagerId = managerId;

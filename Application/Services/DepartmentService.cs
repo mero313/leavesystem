@@ -86,36 +86,38 @@ namespace LeaveRequestSystem.Application.Services
             return DepartmentMapper.ToResponseDto(department);
 
         }
-        public async Task<DepartmentWithStatsDto> AssignManagerAsync(int departmentId, int managerUserId, CancellationToken ct = default)
+        public async Task<DepartmentWithStatsDto> AssignManagerAsync(int departmentId, int UserId, CancellationToken ct = default)
         {
             // 1) تأكد من القسم
             var department = await _department.GetDepartmentByIdAsync(departmentId, ct)
                               ?? throw new KeyNotFoundException("Department not found");
 
             // 2) تأكد من المستخدم
-            var manager = await _users.GetUserByIdAsync(managerUserId, ct)
+            var user = await _users.GetUserByIdAsync(UserId, ct)
                            ?? throw new KeyNotFoundException("User not found");
+            if(department.ManagerId == user.Id)
+                throw new InvalidOperationException("User is already the manager of this department");
 
-            if (!manager.IsActive)
+            if (!user.IsActive)
                 throw new InvalidOperationException("User is not active");
 
             // 3) تأكد أنه مدير
-            if (manager.Role != Role.MANAGER)
+            if (user.Role != Role.MANAGER)
                 throw new InvalidOperationException("Provided user is not a manager");
 
             // 4) تأكد أن المستخدم ما يدير قسم ثاني
-            var existingDep = await _department.GetByManagerIdAsync(manager.Id, ct);
-            if (existingDep is not null && existingDep.Id != departmentId)
+            var existingDep = await _department.GetByManagerIdAsync(user.Id, ct);
+            if (existingDep is not null && existingDep.Id != departmentId )
                 throw new InvalidOperationException(
                     $"User already manages department '{existingDep.Name}' (Id={existingDep.Id}).");
 
             // 5) حدث القسم وحدد المدير
-            department.ManagerId = manager.Id;
+            department.ManagerId = user.Id;
             await _department.UpdateAsync(department, ct);
 
             // 6) اربط المدير بالقسم
-            manager.DepartmentId = department.Id;
-            await _users.UpdateAsync(manager, ct);
+            user.DepartmentId = department.Id;
+            await _users.UpdateAsync(user, ct);
 
             // 7) رجّع DTO للـ frontend
             return DepartmentMapper.ToResponseDto(department);
@@ -160,7 +162,9 @@ namespace LeaveRequestSystem.Application.Services
             {
                 Id = d.Id,
                 Name = d.Name,
-                UsersCount = counts.TryGetValue(d.Id, out var c) ? c : 0
+                UsersCount = counts.TryGetValue(d.Id, out var c) ? c : 0,
+                
+                
             })
             .OrderBy(d => d.Name)
             .ToList();

@@ -118,11 +118,37 @@ namespace LeaveRequestSystem.Application.Mappers
                 Id = department.Id,
                 Name = department.Name,
                 ManagerId = department.ManagerId
-                
+
 
             };
         }
+
+
+
+    }
+
+    public static class UserMapper
+    {
+        public static UserDto UserResponseDto(User user)
+        {
+             return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Name = user.Name,
+                Email = user.Email ?? "",
+                DepartmentId = user.DepartmentId,
+                DepartmentName = user.Department?.Name ?? "", // اذا محمّل الـ navigation
+                ManagerId = user.ManagerId,
+                ManagerName = user.Manager?.Name ?? "",
+                Role = user.Role,
+                IsActive = user.IsActive
+            };
+        }
+        public static List<UserDto> UserResponseDto(IEnumerable<User> users)
+        => users.Select(UserResponseDto).ToList();
     }
 }
+
 
 

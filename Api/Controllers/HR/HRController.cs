@@ -5,6 +5,7 @@ using LeaveRequestSystem.Application.Services;
 using System.Security.Claims;
 using LeaveRequestSystem.Domain.Entities;
 using LeaveRequestSystem.Migrations;
+using LeaveRequestSystem.Domain.Enums;
 
 namespace LeaveRequestSystem.Api.Controllers
 {
@@ -23,6 +24,15 @@ namespace LeaveRequestSystem.Api.Controllers
             _userService = userService;
             _departmentService = departmentService;
         }
+
+
+        // Approve or reject leave requests by HR
+    /// <summary>
+    /// Approve a leave request by HR.
+    /// </summary>
+    /// <param name="leaveId"> id of leave request </param>
+    /// <param name="dto"> reason of Approve    </param>
+    /// <returns></returns>
 
         [HttpPost("approve/{leaveId:int}")]
         public async Task<IActionResult> Approve(int leaveId, [FromBody] DecisionDto dto)
@@ -49,7 +59,7 @@ namespace LeaveRequestSystem.Api.Controllers
             return Ok(res);
         }
         [HttpPost("{departmentId:int}/assign-manager")]
-        public async Task<IActionResult> AssignManager(int departmentId,  int manageruserid, CancellationToken ct)
+        public async Task<IActionResult> AssignManager(int departmentId, int manageruserid, CancellationToken ct)
         {
             var result = await _departmentService.AssignManagerAsync(departmentId, manageruserid, ct);
             return Ok(result);
@@ -66,7 +76,7 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
         [HttpPost("to-employee")]
-        public async Task<IActionResult> Employee([FromBody] PromotionManagerDto  dto, bool removeFromDepartment, CancellationToken ct)
+        public async Task<IActionResult> Employee([FromBody] PromotionManagerDto dto, bool removeFromDepartment, CancellationToken ct)
         {
 
             await _userService.Demote2Employee(dto.UserId, removeFromDepartment, ct);
@@ -77,21 +87,56 @@ namespace LeaveRequestSystem.Api.Controllers
         public async Task<IActionResult> ToggleActive([FromBody] ToggleActiveDto dto)
         {
             await _userService.ToggleActiveAsync(dto.UserId, dto.IsActive);
-            return Ok(new { message = "Updated" });
+            return Ok(new
+            {
+                message = "the user status has been changed - " + (dto.IsActive ? "Activated" : "Deactivated"),
+             });
         }
 
 
 
-        [HttpGet("user-managment")]
-        public async Task<IActionResult> UserManagement()
+        [HttpGet("All-users")]
+        public async Task<IActionResult> UserManagement([FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] string? search = null,
+            [FromQuery] int? departmentId = null,
+            [FromQuery] int? managerId = null,
+            [FromQuery] bool? isActive = null,
+            [FromQuery] string? sortBy = "id",
+            [FromQuery] bool desc = true,
+            [FromQuery] Role? role = null,
+            CancellationToken ct = default)
         {
-            var allusers = await _userService.GetallUsersAsync();
-            return Ok(new
+
+            var q = new UserQuery
             {
-                message = "seccses",
-                count = allusers.Count(),
-                users = allusers
+                Page = page,
+                PageSize = pageSize,
+                Search = search,
+                DepartmentId = departmentId,
+                ManagerId = managerId,
+                IsActive = isActive,
+                SortBy = sortBy,
+                Desc = desc,
+                Role = role
+            };
+            var result = await _userService.SearchUsersAsync(q, ct);
+             return Ok(new
+             {
+                 success = true,
+                 total = result.TotalCount,
+                 page = result.Page,
+                 pageSize = result.PageSize,
+                 items = result.Items
+        
             });
+            // var allusers = await _userService.GetallUsersAsync();
+            // return Ok(new
+            // {
+            //     message = "seccses",
+            //     count = allusers.Count(),
+            //     users = allusers
+            // });
         }
 
         [HttpPost("departments")]
@@ -156,6 +201,13 @@ namespace LeaveRequestSystem.Api.Controllers
         {
             await _departmentService.RemoveEmployeeAsync(departmentId, userId, ct);
             return Ok(new { success = true });
+        }
+
+        [HttpGet("pending-requests")]
+        public async Task<IActionResult> GetPendingRequests()
+        {
+            var requests = await _hrService.HrPendingRequest();
+            return Ok(requests);
         }
     }
 }

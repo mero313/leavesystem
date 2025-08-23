@@ -1,5 +1,6 @@
 // Domain/Repositories/IUserRepository.cs
 using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Application.DTOs;
 
 namespace LeaveRequestSystem.Domain.Repositories
 {
@@ -8,9 +9,9 @@ namespace LeaveRequestSystem.Domain.Repositories
     Task<User?> GetByUsernameAsync(string username);
     Task<User?> GetByEmailAsync(string email, CancellationToken ct = default);
     Task AddAsync(User user);
-    Task<User?> GetUserByIdAsync(int id, CancellationToken ct);
+    Task<User?> GetUserByIdAsync(int id, CancellationToken ct = default);
     // 
-    Task<List<User>> GetUsers();
+    Task<List<User>> GetUsers(CancellationToken ct = default);
     Task UpdateAsync(User user, CancellationToken ct); // ✅ ضرورية
                                                        // (اختياري) تسهيلات:
     Task<List<User>> GetByManagerIdAsync(int managerId);
@@ -18,8 +19,10 @@ namespace LeaveRequestSystem.Domain.Repositories
 
     Task<Dictionary<int, int>> CountEmployeesPerDepartmentAsync(CancellationToken ct = default);
     Task<List<string>> GetEmployeeNamesByDepartmentAsync(int departmentId, CancellationToken ct = default);
-      Task<List<User>> ListByManagerIdAsync(int managerId, CancellationToken ct = default);
-        Task UpdateRangeAsync(IEnumerable<User> users, CancellationToken ct = default);
+    Task<List<User>> ListByManagerIdAsync(int managerId, CancellationToken ct = default);
+    Task UpdateRangeAsync(IEnumerable<User> users, CancellationToken ct = default);
+        
+    Task<PagedResult<UserDto>> GetUsersPagedDtoAsync(UserQuery query, CancellationToken ct = default);
   }
 
 }
