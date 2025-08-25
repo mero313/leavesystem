@@ -27,7 +27,11 @@ namespace LeaveRequestSystem.Application.Services
             return DepartmentMapper.ToResponseDto(department);
         }
 
-
+/// <summary>
+/// Get all departments with statistics.
+/// </summary>
+/// <returns></returns>
+/// <exception cref="KeyNotFoundException"></exception>
 
         public async Task<List<DepartmentWithStatsDto>> GetAllDepsAsync()
         {
@@ -57,14 +61,16 @@ namespace LeaveRequestSystem.Application.Services
                 if (!manager.IsActive)
                     throw new InvalidOperationException(" user is not active");
 
+                if (manager?.Role != Role.MANAGER)
+                    throw new InvalidOperationException("Provided user is not a manager.");
+
                 var existingDep = await _department.GetByManagerIdAsync(manager.Id, ct);
                 if (existingDep is not null)
                     throw new InvalidOperationException(
                         $"User already manages department '{existingDep.Name}' (Id={existingDep.Id}).");
             }
 
-            if (manager?.Role != Role.MANAGER)
-                throw new InvalidOperationException("Provided user is not a manager.");
+
 
             var department = new Department
             {
@@ -95,7 +101,7 @@ namespace LeaveRequestSystem.Application.Services
             // 2) تأكد من المستخدم
             var user = await _users.GetUserByIdAsync(UserId, ct)
                            ?? throw new KeyNotFoundException("User not found");
-            if(department.ManagerId == user.Id)
+            if (department.ManagerId == user.Id)
                 throw new InvalidOperationException("User is already the manager of this department");
 
             if (!user.IsActive)
@@ -107,7 +113,7 @@ namespace LeaveRequestSystem.Application.Services
 
             // 4) تأكد أن المستخدم ما يدير قسم ثاني
             var existingDep = await _department.GetByManagerIdAsync(user.Id, ct);
-            if (existingDep is not null && existingDep.Id != departmentId )
+            if (existingDep is not null && existingDep.Id != departmentId)
                 throw new InvalidOperationException(
                     $"User already manages department '{existingDep.Name}' (Id={existingDep.Id}).");
 
@@ -163,8 +169,8 @@ namespace LeaveRequestSystem.Application.Services
                 Id = d.Id,
                 Name = d.Name,
                 UsersCount = counts.TryGetValue(d.Id, out var c) ? c : 0,
-                
-                
+
+
             })
             .OrderBy(d => d.Name)
             .ToList();

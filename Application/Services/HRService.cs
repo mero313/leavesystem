@@ -19,13 +19,21 @@ namespace LeaveRequestSystem.Application.Services
         {
             var leave = await _leaveRepository.GetByIdAsync(leaveId) ?? throw new Exception("Request not found");
 
-            if (leave.Status != LeaveStatus.ManagerApproved) throw new InvalidOperationException("Must be ManagerApproved first");
+            switch (leave.Status)
+            {
+                case LeaveStatus.ManagerApproved:
+                    // الحالة الوحيدة المسموحة بالانتقال إلى HRApproved
+                    break;
 
-            else if (leave.Status == LeaveStatus.HRApproved)
-                throw new InvalidOperationException("Already approved by HR");
+                case LeaveStatus.HRApproved:
+                    throw new InvalidOperationException("Request is already HRApproved.");
 
-            else if (leave.Status == LeaveStatus.Rejected)
-                throw new InvalidOperationException("Cannot approve a rejected request its reject by manager : " + leave.ApprovedByManager);
+                case LeaveStatus.Rejected:
+                    throw new InvalidOperationException("Request is already Rejected by manager : " + leave.ApprovedByManager?.Username);
+
+                default:
+                    throw new InvalidOperationException("Request must be ManagerApproved before HR Approval.");
+            }
 
 
             leave.Status = LeaveStatus.HRApproved;
@@ -51,7 +59,7 @@ namespace LeaveRequestSystem.Application.Services
                     throw new InvalidOperationException("Request is already HRApproved.");
 
                 case LeaveStatus.Rejected:
-                    throw new InvalidOperationException("Cannot approve a rejected request by manager : " + leave.ApprovedByManager);
+                    throw new InvalidOperationException("Request is already Rejected by manager : " + leave.ApprovedByManager?.Username);
 
                 default:
                     throw new InvalidOperationException("Request must be ManagerApproved before HR Reject.");

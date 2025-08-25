@@ -32,6 +32,7 @@ namespace LeaveRequestSystem.Application.Mappers
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
+                managerName = entity.ApprovedByManager?.Name ?? string.Empty, // إذا كنت تعمل Include(ApprovedByManager) في الـ repo، إبقِ السطر، وإلا اشيله:
                 // إذا كنت تعمل Include(User) في الـ repo، إبقِ السطر، وإلا اشيله:
                 UserName = entity.User?.Username ?? string.Empty,
                 FromDate = entity.FromDate,

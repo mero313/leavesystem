@@ -24,6 +24,8 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<LeaveRequest?> GetByIdAsync(int id)
         {
             return await _db.LeaveRequests
+                .Include(l => l.ApprovedByManager) // حتى ManagerName يظهر بالمابر
+                .Include(l => l.ApprovedByHR) // حتى HRName يظهر بالمابر
                 .Include(l => l.User) // حتى UserName يظهر بالمابر
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
