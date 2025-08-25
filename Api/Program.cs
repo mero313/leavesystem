@@ -87,11 +87,14 @@ builder.Services.AddCors(o =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    c.RoutePrefix = app.Environment.IsDevelopment() ? "swagger" : string.Empty;
+    c.DocumentTitle = "mERO  API Docs";
+});
 
 app.UseCors("AllowAll");
 app.UseAuthentication();
