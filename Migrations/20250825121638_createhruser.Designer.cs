@@ -3,6 +3,7 @@ using System;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    partial class AppDataModelSnapshot : ModelSnapshot
+    [Migration("20250825121638_createhruser")]
+    partial class createhruser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,11 +250,11 @@ namespace LeaveRequestSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = -2,
-                            CreatedAt = new DateTime(2025, 8, 25, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "hr@example.com",
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 8, 25, 12, 16, 38, 268, DateTimeKind.Utc).AddTicks(4199),
+                            Email = "admin@example.com",
                             IsActive = true,
-                            Name = "Ahmed",
+                            Name = "ahmed",
                             PasswordHash = "123",
                             Role = 0,
                             Username = "hr"
