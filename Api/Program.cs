@@ -82,7 +82,10 @@ builder.Services.AddScoped<DepartmentService>(); // ✅ الأفضل
 
 builder.Services.AddCors(o =>
 {
-    o.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    o.AddPolicy("AllowAll", p =>
+        p.AllowAnyOrigin()
+         .AllowAnyHeader()
+         .AllowAnyMethod());
 });
 
 var app = builder.Build();
