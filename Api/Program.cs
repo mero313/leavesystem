@@ -8,13 +8,13 @@ using LeaveRequestSystem.Domain.Repositories;
 using LeaveRequestSystem.Infrastructure.Repositories;
 using LeaveRequestSystem.Application.Services;
 using System.Reflection;
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // DbContext
-builder.Services.AddDbContext<AppData>();
-
+builder.Services.AddDbContext<AppData>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Controllers
 builder.Services.AddControllers();
 
