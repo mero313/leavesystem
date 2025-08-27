@@ -9,10 +9,12 @@ namespace LeaveRequestSystem.Application.Services
     public class HRService
     {
         private readonly ILeaveRequestRepository _leaveRepository;
+        private readonly IUserRepository _userRepository;
 
-        public HRService(ILeaveRequestRepository leaveRepository)
+        public HRService(ILeaveRequestRepository leaveRepository ,IUserRepository userRepository) 
         {
-            _leaveRepository = leaveRepository;
+            _leaveRepository = leaveRepository ;
+            _userRepository = userRepository;
         }
 
         public async Task<LeaveRequestResponseDto> ApproveByHRAsync(int leaveId, int hrId, string? reason)
@@ -89,6 +91,48 @@ namespace LeaveRequestSystem.Application.Services
                 LeaveRequests = data
             };
         }
+
+        public async Task<LeaveRequestListResponse> GetAllLeaveRequestsAsync()
+        {
+            var leaveRequests = await _leaveRepository.GetAllAsync();
+
+            var data = leaveRequests
+                .OrderByDescending(lr => lr.Id)
+                .Select(LeaveRequestMapper.ToResponseDto)
+                .ToList();
+
+            return new LeaveRequestListResponse
+            {
+                Count = data.Count,
+                LeaveRequests = data
+            };
+        }
+
+        public async Task<HRStatisticsDto> GetHRStatisticsAsync()
+        {
+            var user = await _userRepository.GetUsers();
+            if (user == null || user.Count == 0) throw new KeyNotFoundException("No users found");  
+            var leaveRequests = await _leaveRepository.GetAllAsync();
+
+            var stats = new HRStatisticsDto
+            {   users_count = user.Count(),
+                leave_Count = leaveRequests.Count,
+                LeaveStatistics = new List<LeaveStatisticsDto>
+                {
+                    new LeaveStatisticsDto
+                    {
+
+                        PendingRequests = leaveRequests.Count(lr => lr.Status == LeaveStatus.Pending),
+                          ManagerApproved = leaveRequests.Count(lr => lr.Status == LeaveStatus.ManagerApproved),
+                           HRApproved = leaveRequests.Count(lr => lr.Status == LeaveStatus.HRApproved),
+                             Rejected = leaveRequests.Count(lr => lr.Status == LeaveStatus.Rejected)
+                    } }
+            };
+           
+            return stats;
+        }
+
+       
 
     }
 }

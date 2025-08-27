@@ -27,12 +27,12 @@ namespace LeaveRequestSystem.Api.Controllers
 
 
         // Approve or reject leave requests by HR
-    /// <summary>
-    /// Approve a leave request by HR.
-    /// </summary>
-    /// <param name="leaveId"> id of leave request </param>
-    /// <param name="dto"> reason of Approve    </param>
-    /// <returns></returns>
+        /// <summary>
+        /// Approve a leave request by HR.
+        /// </summary>
+        /// <param name="leaveId"> id of leave request </param>
+        /// <param name="dto"> reason of Approve    </param>
+        /// <returns></returns>
 
         [HttpPost("approve/{leaveId:int}")]
         public async Task<IActionResult> Approve(int leaveId, [FromBody] DecisionDto dto)
@@ -46,12 +46,12 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Reject a leave request by HR.
-/// </summary>
-/// <param name="leaveId"></param>
-/// <param name="dto"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Reject a leave request by HR.
+        /// </summary>
+        /// <param name="leaveId"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost("reject/{leaveId:int}")]
         public async Task<IActionResult> Reject(int leaveId, [FromBody] DecisionDto dto)
         {
@@ -73,12 +73,12 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Promote a user to manager.
-/// </summary>
-/// <param name="dto"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Promote a user to manager.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpPost("to-manager")]
         public async Task<IActionResult> Manager([FromBody] PromotionManagerDto dto, CancellationToken ct)
         {
@@ -88,13 +88,13 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Demote a manager to employee.
-/// </summary>
-/// <param name="dto"></param>
-/// <param name="removeFromDepartment"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Demote a manager to employee.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="removeFromDepartment"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpPost("to-employee")]
         public async Task<IActionResult> Employee([FromBody] PromotionManagerDto dto, bool removeFromDepartment, CancellationToken ct)
         {
@@ -104,11 +104,11 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Toggle a user's active status.
-/// </summary>
-/// <param name="dto"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Toggle a user's active status.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost("toggle-active")]
         public async Task<IActionResult> ToggleActive([FromBody] ToggleActiveDto dto)
         {
@@ -116,24 +116,24 @@ namespace LeaveRequestSystem.Api.Controllers
             return Ok(new
             {
                 message = "the user status has been changed - " + (dto.IsActive ? "Activated" : "Deactivated"),
-             });
+            });
         }
 
 
-/// <summary>
-/// Get a paginated list of users with filtering and sorting options.
-/// </summary>
-/// <param name="page"></param>
-/// <param name="pageSize"></param>
-/// <param name="search"></param>
-/// <param name="departmentId"></param>
-/// <param name="managerId"></param>
-/// <param name="isActive"></param>
-/// <param name="sortBy"></param>
-/// <param name="desc"></param>
-/// <param name="role"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Get a paginated list of users with filtering and sorting options.
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="search"></param>
+        /// <param name="departmentId"></param>
+        /// <param name="managerId"></param>
+        /// <param name="isActive"></param>
+        /// <param name="sortBy"></param>
+        /// <param name="desc"></param>
+        /// <param name="role"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpGet("All-users")]
         public async Task<IActionResult> UserManagement([FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
@@ -160,23 +160,23 @@ namespace LeaveRequestSystem.Api.Controllers
                 Role = role
             };
             var result = await _userService.SearchUsersAsync(q, ct);
-             return Ok(new
-             {
-                 success = true,
-                 total = result.TotalCount,
-                 page = result.Page,
-                 pageSize = result.PageSize,
-                 items = result.Items
-        
+            return Ok(new
+            {
+                success = true,
+                total = result.TotalCount,
+                page = result.Page,
+                pageSize = result.PageSize,
+                items = result.Items
+
             });
-         
+
         }
-/// <summary>
-/// Create a new department.
-/// </summary>
-/// <param name="dto"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Create a new department.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpPost("departments")]
         public async Task<IActionResult> AddDepartment([FromBody] DepartmentRequestDto dto, CancellationToken ct)
         {
@@ -188,11 +188,11 @@ namespace LeaveRequestSystem.Api.Controllers
             return Ok(result);
         }
 
-/// <summary>
-/// Get department details by ID.
-/// </summary>
-/// <param name="id"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Get department details by ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("departments/{id:int}")]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
@@ -201,13 +201,13 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Get department statistics, optionally including user details.
-/// </summary>
-/// <param name="id"></param>
-/// <param name="users"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Get department statistics, optionally including user details.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="users"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpGet("department-stats")]
         public async Task<IActionResult> GetDepartmentStats(int id, bool users, CancellationToken ct)
         {
@@ -216,11 +216,11 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Get all departments with statistics.
-/// </summary>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Get all departments with statistics.
+        /// </summary>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpGet("department-list")]
         public async Task<List<DepartmentWithStatsDto>> ListDepartmentsWithCount(CancellationToken ct)
         {
@@ -229,14 +229,14 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Add an employee to a department.
-/// </summary>
-/// <param name="moveIfInAnotherDept"></param>
-/// <param name="departmentId"></param>
-/// <param name="dto"></param>
-/// <param name="ct"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Add an employee to a department.
+        /// </summary>
+        /// <param name="moveIfInAnotherDept"></param>
+        /// <param name="departmentId"></param>
+        /// <param name="dto"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpPost("{departmentId:int}/employees")]
         public async Task<IActionResult> AddEmployee(bool moveIfInAnotherDept,
             int departmentId,
@@ -267,13 +267,13 @@ namespace LeaveRequestSystem.Api.Controllers
             return Ok(new { success = true, added = dto.UserIds.Distinct().Count() });
         }
 
-    /// <summary>
-    ///     Remove an employee from a department.
-    /// </summary>
-    /// <param name="departmentId"></param>
-    /// <param name="userId"></param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
+        /// <summary>
+        ///     Remove an employee from a department.
+        /// </summary>
+        /// <param name="departmentId"></param>
+        /// <param name="userId"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
         [HttpDelete("{departmentId:int}/employees/{userId:int}")]
         public async Task<IActionResult> RemoveEmployee(int departmentId, int userId, CancellationToken ct)
         {
@@ -282,15 +282,37 @@ namespace LeaveRequestSystem.Api.Controllers
         }
 
 
-/// <summary>
-/// Get all pending leave requests for HR approval.
-/// </summary>
-/// <returns></returns>
+        /// <summary>
+        /// Get all pending leave requests for HR approval.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("pending-requests")]
         public async Task<IActionResult> GetPendingRequests()
         {
             var requests = await _hrService.HrPendingRequest();
             return Ok(requests);
+        }
+
+        /// <summary>
+        /// Get count of all users in the system.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-stats-count")]
+        public async Task<IActionResult> GetStatsCount()
+        {
+            var count = await _userService.GetallUsersAsync();
+            return Ok(new
+            {
+                count = count.Count,
+            });
+        }
+
+
+        [HttpGet("hr-statistics")]
+        public async Task<IActionResult> GetHRStatistics()
+        {
+            var stats = await _hrService.GetHRStatisticsAsync();
+            return Ok(stats);
         }
     }
 }
