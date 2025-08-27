@@ -9,6 +9,9 @@ using LeaveRequestSystem.Infrastructure.Repositories;
 using LeaveRequestSystem.Application.Services;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using LeaveRequestSystem.Domain.Entities;
+using LeaveRequestSystem.Domain.Enums;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,10 +91,18 @@ builder.Services.AddCors(o =>
          .AllowAnyMethod());
 });
 
+// هنا نعدل إعدادات الـ JSON serialization
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 var app = builder.Build();
 
 
-    app.UseSwagger();
+
+app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");

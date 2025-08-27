@@ -19,10 +19,10 @@ namespace LeaveRequestSystem.Application.Services
 
         }
 
-        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId ,  CancellationToken ct = default)
+        public async Task<LeaveRequestResponseDto> CreateLeaveRequestAsync(LeaveRequestRequestDto dto, int userId, CancellationToken ct = default)
         {
             // 1) التحقق من المستخدم
-            var user = await _userRepository.GetUserByIdAsync(userId ,ct)
+            var user = await _userRepository.GetUserByIdAsync(userId, ct)
                        ?? throw new UnauthorizedAccessException("User not authenticated");
 
             // 2) التحقق من التواريخ
@@ -38,7 +38,7 @@ namespace LeaveRequestSystem.Application.Services
                 throw new InvalidOperationException("الموظف غير مرتبط بأي مدير، يرجى ربط الحساب بمدير.");
 
             // 4) التحقق من وجود المدير وصحته
-            var manager = await _userRepository.GetUserByIdAsync(user.ManagerId.Value , ct);
+            var manager = await _userRepository.GetUserByIdAsync(user.ManagerId.Value, ct);
             if (manager == null || manager.Role != Role.MANAGER || !manager.IsActive)
                 throw new InvalidOperationException("مدير غير صالح أو غير موجود.");
 
@@ -56,10 +56,18 @@ namespace LeaveRequestSystem.Application.Services
             return LeaveRequestMapper.ToResponseDto(entity);
         }
 
-        public async Task<List<LeaveRequestResponseDto>> GetRequestsForUserAsync(int userId)
+        public async Task<List<LeaveRequestListResponse>> GetRequestsForUserAsync(int userId)
         {
             var requests = await leaveRequestRepository.GetByUserIdAsync(userId);
-            return requests.Select(LeaveRequestMapper.ToResponseDto).ToList();
+            return new List<LeaveRequestListResponse>
+            {
+                new LeaveRequestListResponse
+                {
+                    Count = requests.Count,
+                    LeaveRequests = requests.Select(LeaveRequestMapper.ToResponseDto).ToList()
+                }
+            };
+        
         }
 
         public async Task<LeaveRequestResponseDto?> GetRequestByIdAsync(int id)
@@ -73,5 +81,22 @@ namespace LeaveRequestSystem.Application.Services
             var requests = await leaveRequestRepository.GetAllAsync();
             return requests.Select(LeaveRequestMapper.ToResponseDto).ToList();
         }
+
+
+
+
+        public async Task<LeaveRequestStatisticsDto> GetAllRequestsCountAsync( int userId)
+        {
+            var requests = await leaveRequestRepository.GetAllCountAsync(userId);
+
+            return new LeaveRequestStatisticsDto
+            {
+                Pending = requests.Count(r => r.Status == LeaveStatus.Pending),
+                ManagerApproved = requests.Count(r => r.Status == LeaveStatus.ManagerApproved),
+                HRApproved = requests.Count(r => r.Status == LeaveStatus.HRApproved),
+                Rejected = requests.Count(r => r.Status == LeaveStatus.Rejected)
+            };
+        }
+
     }
 }

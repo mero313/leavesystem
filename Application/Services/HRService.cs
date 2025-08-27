@@ -73,14 +73,23 @@ namespace LeaveRequestSystem.Application.Services
             return LeaveRequestMapper.ToResponseDto(leave);
         }
 
-        public async Task<IEnumerable<LeaveRequest>> HrPendingRequest()
+        public async Task<LeaveRequestListResponse> HrPendingRequest()
         {
-            var LeaveRequests = await _leaveRepository.GetAllAsync();
-            var data = LeaveRequests.Where(lr => lr.Status == LeaveStatus.Pending || lr.Status == LeaveStatus.ManagerApproved)
+            var leaveRequests = await _leaveRepository.GetAllAsync();
+
+            var data = leaveRequests
+                .Where(lr => lr.Status == LeaveStatus.ManagerApproved)
                 .OrderByDescending(lr => lr.Id)
+                .Select(LeaveRequestMapper.ToResponseDto)
                 .ToList();
-            return data;
+
+            return new LeaveRequestListResponse
+            {
+                Count = data.Count,
+                LeaveRequests = data
+            };
         }
+
     }
 }
 

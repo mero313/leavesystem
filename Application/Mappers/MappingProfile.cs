@@ -29,6 +29,7 @@ namespace LeaveRequestSystem.Application.Mappers
         public static LeaveRequestResponseDto ToResponseDto(LeaveRequest entity)
         {
             return new LeaveRequestResponseDto
+            
             {
                 Id = entity.Id,
                 UserId = entity.UserId,

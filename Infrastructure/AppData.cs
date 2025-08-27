@@ -150,21 +150,8 @@ namespace LeaveRequestSystem.Infrastructure.Data
 
 
 
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id = -2,
-                Username = "hr",
-                Name = "Ahmed",
-                Email = "hr@example.com",
-                PasswordHash = "123",
-                Role = Role.HR,
-                IsActive = true,
-                DepartmentId = null,
-                ManagerId = null,
-                CreatedAt = new DateTime(2025, 8, 25, 12, 0, 0), // static value
-                
-
-            });
+            
+            
 
         }
 

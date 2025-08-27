@@ -15,8 +15,12 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<User?> GetByUsernameAsync(string username)
             => await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
 
+
+
         public Task<User?> GetByEmailAsync(string email, CancellationToken ct = default) =>
             _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, ct);
+
+            
 
         public async Task<User?> GetUserByIdAsync(int id, CancellationToken ct = default)
             => await _db.Users.FindAsync(id);

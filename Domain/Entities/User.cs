@@ -38,6 +38,7 @@ namespace LeaveRequestSystem.Domain.Entities
 
         // ✅ خزّن UTC فقط
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+         
 
         // علاقات الإجازات
         public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();

@@ -3,6 +3,7 @@ using System;
 using LeaveRequestSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LeaveRequestSystem.Migrations
 {
     [DbContext(typeof(AppData))]
-    partial class AppDataModelSnapshot : ModelSnapshot
+    [Migration("20250825124254_createhruser2123213123")]
+    partial class createhruser2123213123
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +224,9 @@ namespace LeaveRequestSystem.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -243,6 +249,20 @@ namespace LeaveRequestSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2025, 8, 25, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "hr@example.com",
+                            IsActive = true,
+                            Name = "Ahmed",
+                            PasswordHash = "123",
+                            Role = 0,
+                            UpdatedAt = new DateTime(2025, 8, 25, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Username = "hr"
+                        });
                 });
 
             modelBuilder.Entity("LeaveRequestSystem.Domain.Entities.Department", b =>

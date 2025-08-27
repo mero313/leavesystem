@@ -95,8 +95,17 @@ namespace LeaveRequestSystem.Application.Services
         }
 
 
-       public Task<PagedResult<UserDto>> SearchUsersAsync(UserQuery q, CancellationToken ct = default)
-        => _users.GetUsersPagedDtoAsync(q, ct); // ✅ مباشرة بدون Mapper إضافي
+        public Task<PagedResult<UserDto>> SearchUsersAsync(UserQuery q, CancellationToken ct = default)
+         => _users.GetUsersPagedDtoAsync(q, ct); // ✅ مباشرة بدون Mapper إضافي
+
+
+        // public async Task<list<LeaveRequest>> Getallleaverequest(int userId, CancellationToken ct = default)
+        // {
+        //     var user = await _users.GetUserByIdAsync(userId, ct) ?? throw new KeyNotFoundException("User not found");
+
+        //     return UserMapper.UserResponseDto(user.LeaveRequests.ToList());
+            
+        // }
 
         }
     }

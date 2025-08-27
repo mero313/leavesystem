@@ -42,6 +42,7 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public async Task<List<LeaveRequest>> GetAllAsync()
         {
             return await _db.LeaveRequests
+                .AsNoTracking()
                 .Include(l => l.User)
                 .OrderByDescending(l => l.Id)
                 .ToListAsync();
@@ -81,6 +82,23 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
                                l.Status != LeaveStatus.Rejected && // عدّل حسب منطقك
                                l.FromDate < to && from < l.ToDate); // شرط التداخل
         }
+
+        // public async Task<int> GetAllCountAsync(int userId)
+        // {
+        //     return await _db.LeaveRequests
+        //         .Where(lr => lr.UserId == userId) // adjust field name if different
+        //         .CountAsync();
+        // }
+
+        public async Task<List<LeaveRequest>> GetAllCountAsync(int userId)
+        {
+            return await _db.LeaveRequests
+                .Include(l => l.User)
+                .Where(lr => lr.UserId == userId)
+                .OrderByDescending(lr => lr.Id)
+                .ToListAsync();
+        }
+        
 
     }
 }
