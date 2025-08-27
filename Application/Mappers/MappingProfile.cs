@@ -29,7 +29,7 @@ namespace LeaveRequestSystem.Application.Mappers
         public static LeaveRequestResponseDto ToResponseDto(LeaveRequest entity)
         {
             return new LeaveRequestResponseDto
-            
+
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
@@ -58,12 +58,11 @@ namespace LeaveRequestSystem.Application.Mappers
                 Expiration = DateTime.UtcNow.AddHours(1),
                 User = new UserDto
                 {
-                    Id = user.Id,
                     Username = user.Username,
                     Name = user.Name,
                     Email = user.Email ?? string.Empty,
-                    DepartmentId = user.DepartmentId,
                     DepartmentName = user.Department?.Name ?? string.Empty,
+                    ManagerName = user.Manager?.Name ?? string.Empty,
                     Role = user.Role,
                     IsActive = user.IsActive
                 }
@@ -133,7 +132,7 @@ namespace LeaveRequestSystem.Application.Mappers
     {
         public static UserDto UserResponseDto(User user)
         {
-             return new UserDto
+            return new UserDto
             {
                 Id = user.Id,
                 Username = user.Username,

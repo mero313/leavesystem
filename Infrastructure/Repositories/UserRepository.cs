@@ -13,7 +13,9 @@ namespace LeaveRequestSystem.Infrastructure.Repositories
         public UserRepository(AppData db) => _db = db;
 
         public async Task<User?> GetByUsernameAsync(string username)
-            => await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
+            => await _db.Users.Include(u => u.Department)
+            .Include(u => u.Manager)
+            .FirstOrDefaultAsync(u => u.Username == username);
 
 
 

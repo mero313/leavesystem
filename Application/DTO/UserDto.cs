@@ -1,6 +1,13 @@
 // UserDto.cs
 using LeaveRequestSystem.Domain.Enums;
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using LeaveRequestSystem.Domain.Entities;
+
+
+
 namespace LeaveRequestSystem.Application.DTOs
 {
     public class UserDto
@@ -14,7 +21,8 @@ namespace LeaveRequestSystem.Application.DTOs
         public string DepartmentName { get; set; } = string.Empty;
 
         public int? ManagerId { get; set; }
-        public string ManagerName { get; set; } = string.Empty;
+        
+         public string? ManagerName { get; set; } = string.Empty; 
         public Role Role { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

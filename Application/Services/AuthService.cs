@@ -45,9 +45,7 @@ namespace LeaveRequestSystem.Application.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("Email", user.Email ?? string.Empty),
-                new Claim("IsActive", user.IsActive.ToString()),
-                new Claim("ManagerId", user.ManagerId?.ToString() ?? string.Empty)
+              
 
             };
             if (user.DepartmentId.HasValue)
@@ -55,7 +53,7 @@ namespace LeaveRequestSystem.Application.Services
 
             if (!string.IsNullOrWhiteSpace(user.Department?.Name))
                 claims.Add(new Claim("DepartmentName", user.Department!.Name));
-            Console.WriteLine($"ManagerId عند تسجيل الدخول: {user.ManagerId}");
+            
 
 
             var keyString = config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
