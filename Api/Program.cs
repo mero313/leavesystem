@@ -107,7 +107,7 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
     c.RoutePrefix = app.Environment.IsDevelopment() ? "swagger" : string.Empty;
-    c.DocumentTitle = "mERO  API Docs";
+    c.DocumentTitle = "Leave Request System API";
 });
 
 app.UseCors("AllowAll");

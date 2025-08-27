@@ -56,17 +56,13 @@ namespace LeaveRequestSystem.Application.Services
             return LeaveRequestMapper.ToResponseDto(entity);
         }
 
-        public async Task<List<LeaveRequestListResponse>> GetRequestsForUserAsync(int userId)
+        public async Task<List<LeaveRequestResponseDto>> GetRequestsForUserAsync(int userId)
         {
             var requests = await leaveRequestRepository.GetByUserIdAsync(userId);
-            return new List<LeaveRequestListResponse>
-            {
-                new LeaveRequestListResponse
-                {
-                    Count = requests.Count,
-                    LeaveRequests = requests.Select(LeaveRequestMapper.ToResponseDto).ToList()
-                }
-            };
+            return requests.Select(LeaveRequestMapper.ToResponseDto).ToList();
+            
+            
+            
         
         }
 
