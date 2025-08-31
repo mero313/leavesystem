@@ -83,7 +83,8 @@ namespace LeaveRequestSystem.Application.Services
 
         public async Task<List<UserDto>> GetallUsersAsync(CancellationToken ct = default)
         {
-            var users = await _users.GetUsers(ct);   // List<User>
+            var users = await _users.GetUsers(ct);   // Li
+            // st<User>
             if (users == null || users.Count == 0) throw new KeyNotFoundException("No users found");
 
 

@@ -12,7 +12,7 @@ namespace LeaveRequestSystem.Application.DTOs
 {
     public class UserDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -23,7 +23,7 @@ namespace LeaveRequestSystem.Application.DTOs
         public int? ManagerId { get; set; }
         
          public string? ManagerName { get; set; } = string.Empty; 
-        public Role Role { get; set; }
+        public Role? Role { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
