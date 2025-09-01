@@ -57,13 +57,14 @@ namespace LeaveRequestSystem.Application.Mappers
                 Token = token,
                 Expiration = DateTime.UtcNow.AddHours(1),
                 User = new UserDto
-                {   
+                {
                     Username = user.Username,
                     Name = user.Name,
                     Email = user.Email ?? string.Empty,
                     DepartmentName = user.Department?.Name ?? string.Empty,
                     ManagerName = user.Manager?.Name ?? string.Empty,
-                    IsActive = user.IsActive
+                    IsActive = user.IsActive,
+                    Role = user.Role
                 }
             };
         }
